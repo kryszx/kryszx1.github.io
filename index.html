@@ -1104,18 +1104,42 @@ async function apiRequest(action, data = {}) {
     throw new Error("Configura API_URL con la URL de tu Web App de Google Apps Script.");
   }
 
+  if (!action || typeof action !== "string") {
+    throw new Error("No se indicó la acción de la API.");
+  }
+
+  const payload = {
+    accion: action,
+    data: data || {}
+  };
+
   const response = await fetch(API_URL, {
     method: "POST",
-    headers: { "Content-Type": "text/plain;charset=utf-8" },
-    // Apps Script recibe la acción en "accion" y los datos en "data".
-    body: JSON.stringify({ accion: action, data: data }),
-    redirect: "follow"
+    headers: {
+      "Content-Type": "text/plain;charset=utf-8"
+    },
+    body: JSON.stringify(payload),
+    redirect: "follow",
+    cache: "no-store"
   });
 
-  if (!response.ok) throw new Error("Error HTTP " + response.status);
+  const texto = await response.text();
 
-  const result = await response.json();
-  if (!result.ok) throw new Error(result.error || "Ocurrió un error en el servidor.");
+  if (!response.ok) {
+    throw new Error("Error HTTP " + response.status + ": " + texto);
+  }
+
+  let result;
+  try {
+    result = JSON.parse(texto);
+  } catch (e) {
+    throw new Error("Apps Script no devolvió JSON válido: " + texto.substring(0, 300));
+  }
+
+  if (!result.ok) {
+    throw new Error(result.error || "Ocurrió un error en el servidor.");
+  }
+
   return result.data;
 }
 
@@ -1620,17 +1644,4 @@ document.addEventListener("input", e=>{
 });
 
 document.addEventListener("change", e=>{
-  if(e.target.closest("#formFactura")){ actualizarPreview(); }
-});
-
-/* INICIALIZACIÓN */
-document.addEventListener("DOMContentLoaded", ()=>{
-  const hoy = new Date();
-  document.getElementById("fFecha").value = hoy.toISOString().substring(0,10);
-  document.getElementById("fAno").value = hoy.getFullYear();
-  seleccionarTipoDocumento("recibo");
-});
-</script>
-
-</body>
-</html>
+  if(e.target.closest("#formFactura")){ actualizarPreview();
