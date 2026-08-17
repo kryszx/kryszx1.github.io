@@ -2,9 +2,9 @@
 <html lang="es">
 <head>
   <base target="_top">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8">
   <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/kryszx/kryszx1.github.io/refs/heads/main/Logo%20Acuavida.png">
-  <title>Acueducto Acuavida El Recreo</title>
+  <title>PANEL ACUAVIDA</title>
 
   <style>
     *{box-sizing:border-box}
@@ -13,16 +13,19 @@
       margin:0;
       font-family:Arial,Helvetica,sans-serif;
       background:#eef2f6;
-      color:#172033
+      color:#172033;
+      min-width: 1280px; /* Garantiza el espacio de pantalla de PC */
     }
 
     .app{
       display:flex;
-      min-height:100vh
+      min-height:100vh;
+      width: 100%;
     }
 
     .sidebar{
       width:235px;
+      min-width:235px;
       background:linear-gradient(180deg,#073c70,#031e39);
       color:#fff;
       padding:20px 12px;
@@ -33,21 +36,21 @@
       z-index:20
     }
 
-.logo-container {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 15px 10px 20px;
-    box-sizing: border-box;
-}
+    .logo-container {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 15px 10px 20px;
+      box-sizing: border-box;
+    }
 
-.logo-container img {
-    width: 175px;
-    height: 175px;
-    object-fit: contain;
-    display: block;
-}
+    .logo-container img {
+      width: 175px;
+      height: 175px;
+      object-fit: contain;
+      display: block;
+    }
 
     .menu-btn{
       width:100%;
@@ -70,7 +73,8 @@
     .content{
       margin-left:235px;
       width:calc(100% - 235px);
-      padding:24px
+      padding:24px;
+      min-width: 1000px;
     }
 
     .topbar{
@@ -213,10 +217,11 @@
       font-weight:700
     }
 
+    /* VISTA DE FACTURACIÓN FIJA EN PC */
     .invoice-layout{
       display:grid;
-      grid-template-columns:minmax(420px,.9fr) minmax(520px,1.1fr);
-      gap:18px;
+      grid-template-columns: 460px 1fr;
+      gap:20px;
       align-items:start
     }
 
@@ -224,7 +229,6 @@
       display:flex;
       align-items:center;
       gap:16px;
-      flex-wrap:wrap;
       padding:10px 12px;
       border:1px solid #d8e0e8;
       border-radius:8px;
@@ -236,11 +240,56 @@
       gap:6px;
       align-items:center;
       font-size:13px;
-      font-weight:700
+      font-weight:700;
+      cursor: pointer;
     }
 
     .tipo-documento input{
       width:auto
+    }
+
+    /* CUADRÍCULA DE MESES FIJA 6x2 EN ESCRITORIO */
+    .months-selector-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .month-card-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 8px 2px;
+      background-color: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease-in-out;
+      user-select: none;
+      font-size: 11px;
+      font-weight: 700;
+      color: #334155;
+      text-transform: uppercase;
+    }
+
+    .month-card-item:hover {
+      background-color: #e2e8f0;
+      border-color: #0875df;
+    }
+
+    .month-card-item input[type="checkbox"] {
+      width: 14px;
+      height: 14px;
+      cursor: pointer;
+      accent-color: #0875df;
+    }
+
+    .month-card-item:has(input[type="checkbox"]:checked) {
+      background-color: #0875df;
+      border-color: #073c70;
+      color: #ffffff;
     }
 
     .invoice-preview{
@@ -287,12 +336,12 @@
     }
 
     .factura-logo {
-    width: 45px;
-    height: 45px;
-    object-fit: contain;
-    display: block;
-    margin: auto;
-}
+      width: 60px;
+      height: 60px;
+      object-fit: contain;
+      display: block;
+      margin: auto;
+    }
 
     .inv-type{
       display:grid;
@@ -499,43 +548,9 @@
       gap:10px;
       margin-top:12px;
       justify-content:center;
-      flex-wrap:wrap
     }
 
-    @media(max-width:1100px){
-      .invoice-layout{
-        grid-template-columns:1fr
-      }
-
-      .grid{
-        grid-template-columns:repeat(2,1fr)
-      }
-    }
-
-    @media(max-width:700px){
-      .sidebar{
-        width:70px
-      }
-
-      .logo{
-        font-size:0
-      }
-
-      .content{
-        margin-left:70px;
-        width:calc(100% - 70px);
-        padding:12px
-      }
-
-      .grid{
-        grid-template-columns:1fr
-      }
-
-      .search{
-        flex-direction:column
-      }
-    }
-
+    /* REGLAS EXCLUSIVAS DE IMPRESIÓN */
     @media print{
       @page{
         size:Letter;
@@ -543,7 +558,8 @@
       }
 
       body{
-        background:#fff!important
+        background:#fff!important;
+        min-width: 0!important;
       }
 
       body *{
@@ -585,10 +601,6 @@
         font-size:16px
       }
 
-      .inv-logo{
-        font-size:22px
-      }
-
       .inv-row{
         min-height:22px
       }
@@ -618,19 +630,20 @@
 <div class="app">
 
   <aside class="sidebar no-print">
-    <div class="sidebar"><div class="logo-container"><img src="Logo2.png" alt="">
+    <div class="logo-container">
+      <img src="Logo2.png" alt="Logo Acuavida">
     </div>
-    <button class="menu-btn active" onclick="mostrar('inicio')">🏠 Inicio</button>
-    <button class="menu-btn" onclick="mostrar('clientes')">👥 Usuarios</button>
-    <button class="menu-btn" onclick="mostrar('facturacion')">🧾 Facturación</button>
-    <button class="menu-btn" onclick="mostrar('pagos')">💰 Pagos</button>
-    <button class="menu-btn" onclick="mostrar('historial')">📋 Historial</button>
+    <button class="menu-btn active" onclick="mostrar('inicio')">🏠 INICIO</button>
+    <button class="menu-btn" onclick="mostrar('clientes')">👥 USUARIOS</button>
+    <button class="menu-btn" onclick="mostrar('facturacion')">🧾 FACTURACIÓN</button>
+    <button class="menu-btn" onclick="mostrar('pagos')">💰 PAGOS</button>
+    <button class="menu-btn" onclick="mostrar('historial')">📋 HISTORIAL</button>
   </aside>
 
   <main class="content">
 
     <div class="topbar no-print">
-      <h1>💧 Acueducto Acuavida Corregimiento El Recreo Nit. 901.888.280-5</h1>
+      <h1>Acueducto Acuavida Corregimiento El Recreo Nit: 901.888.280-5</h1>
       <span>👤 Tesorero</span>
     </div>
 
@@ -644,19 +657,19 @@
 
       <div class="grid">
         <div class="card">
-          <h2>👥 Usuarios</h2>
+          <h2>👥 USUARIOS</h2>
           <div>Buscar o crear usuarios</div>
         </div>
         <div class="card">
-          <h2>🧾 Facturación</h2>
+          <h2>🧾 FACTURACIÓN</h2>
           <div>Generar factura</div>
         </div>
         <div class="card">
-          <h2>💰 Pagos</h2>
+          <h2>💰 PAGOS</h2>
           <div>Registrar pagos</div>
         </div>
         <div class="card">
-          <h2>📋 Historial</h2>
+          <h2>📋 HISTORIAL</h2>
           <div>Consultar facturas</div>
         </div>
       </div>
@@ -678,19 +691,19 @@
         <h2>Información del suscriptor</h2>
         <div class="grid">
           <div class="field">
-            <label>Suscriptor N.º</label>
+            <label>Número De Suscriptor</label>
             <input id="cSuscriptor">
           </div>
           <div class="field">
-            <label>Nombre</label>
+            <label>Nombre Completo</label>
             <input id="cNombre">
           </div>
           <div class="field">
-            <label>Dirección</label>
+            <label>Dirección Residencial</label>
             <input id="cDireccion">
           </div>
           <div class="field">
-            <label>Teléfono</label>
+            <label>Número De Teléfono</label>
             <input id="cTelefono">
           </div>
           <div class="field">
@@ -706,7 +719,7 @@
           </div>
         </div>
         <br>
-        <label>Observaciones</label>
+        <label>Observaciones Del Suscriptor</label>
         <textarea id="cObservaciones"></textarea>
         <br><br>
         <button class="btn-success" onclick="guardarClienteUI()">Guardar cliente</button>
@@ -744,7 +757,7 @@
               </label>
             </div>
             <br>
-            <div class="grid">
+            <div class="grid" style="grid-template-columns: repeat(2, 1fr);">
               <div class="field">
                 <label>Fecha</label>
                 <input id="fFecha" type="date">
@@ -777,32 +790,32 @@
                 <label>Abono</label>
                 <input id="fAbono" type="number" value="0">
               </div>
-              <div class="field">
+              <div class="field" style="grid-column: span 2;">
                 <label>Otros</label>
                 <input id="fOtros" type="number" value="0">
               </div>
             </div>
             <br>
             <h3>Meses a cancelar</h3>
-            <div class="grid" style="grid-template-columns:repeat(4,1fr)" id="selectorMeses">
-              <label><input type="checkbox" value="ENERO"> Enero</label>
-              <label><input type="checkbox" value="FEBRERO"> Febrero</label>
-              <label><input type="checkbox" value="MARZO"> Marzo</label>
-              <label><input type="checkbox" value="ABRIL"> Abril</label>
-              <label><input type="checkbox" value="MAYO"> Mayo</label>
-              <label><input type="checkbox" value="JUNIO"> Junio</label>
-              <label><input type="checkbox" value="JULIO"> Julio</label>
-              <label><input type="checkbox" value="AGOSTO"> Agosto</label>
-              <label><input type="checkbox" value="SEPTIEMBRE"> Septiembre</label>
-              <label><input type="checkbox" value="OCTUBRE"> Octubre</label>
-              <label><input type="checkbox" value="NOVIEMBRE"> Noviembre</label>
-              <label><input type="checkbox" value="DICIEMBRE"> Diciembre</label>
+            <div class="months-selector-grid" id="selectorMeses">
+              <label class="month-card-item"><input type="checkbox" value="ENERO"> Ene</label>
+              <label class="month-card-item"><input type="checkbox" value="FEBRERO"> Feb</label>
+              <label class="month-card-item"><input type="checkbox" value="MARZO"> Mar</label>
+              <label class="month-card-item"><input type="checkbox" value="ABRIL"> Abr</label>
+              <label class="month-card-item"><input type="checkbox" value="MAYO"> May</label>
+              <label class="month-card-item"><input type="checkbox" value="JUNIO"> Jun</label>
+              <label class="month-card-item"><input type="checkbox" value="JULIO"> Jul</label>
+              <label class="month-card-item"><input type="checkbox" value="AGOSTO"> Ago</label>
+              <label class="month-card-item"><input type="checkbox" value="SEPTIEMBRE"> Sep</label>
+              <label class="month-card-item"><input type="checkbox" value="OCTUBRE"> Oct</label>
+              <label class="month-card-item"><input type="checkbox" value="NOVIEMBRE"> Nov</label>
+              <label class="month-card-item"><input type="checkbox" value="DICIEMBRE"> Dic</label>
             </div>
-            <p>
+            <p style="font-size:13px; margin-top:12px;">
               <strong>Meses seleccionados:</strong> <span id="cantidadMeses">0</span> &nbsp; | &nbsp;
               <strong>Valor de cuotas:</strong> <span id="valorMeses">$0</span>
             </p>
-            <div class="grid">
+            <div class="grid" style="grid-template-columns: repeat(2, 1fr);">
               <div class="field">
                 <label>Año</label>
                 <input id="fAno" type="number">
@@ -819,13 +832,13 @@
                 <label>Pagar antes de</label>
                 <input id="fPagarAntes" type="date">
               </div>
-              <div class="field">
+              <div class="field" style="grid-column: span 2;">
                 <label>Fecha de suspensión</label>
                 <input id="fSuspension" type="date">
               </div>
             </div>
             <br>
-            <button class="btn-success" onclick="generarFacturaUI()">💾 Generar factura</button>
+            <button class="btn-success" style="width:100%" onclick="generarFacturaUI()">💾 Generar factura</button>
           </div>
         </div>
 
@@ -834,10 +847,10 @@
           <div class="invoice">
             <div class="inv-head">
               <div class="inv-title">
-                <h2>ACUEDUCTO ACUAVIDA EL RECREO</h2>
+                <h2>ACUEDUCTO ACUAVIDA CGTO EL RECREO</h2>
                 <div>NIT. 901.888.280 - 5</div>
               </div>
-              <img src="Logo1.png" class="factura-logo" alt="">
+              <img src="Logo1.png" class="factura-logo" alt="Logo Factura">
             </div>
 
             <div class="inv-type">
@@ -854,18 +867,18 @@
             <div class="inv-row">
               <span>Nombre:</span>
               <span id="pNombre"></span>
-              <span>Suscriptor No.:</span>
+              <span>Número Suscriptor:</span>
               <span id="pSuscriptor"></span>
             </div>
             <div class="inv-row">
-              <span>Cuota Familiar Acueducto:</span>
+              <span>Cuota Familiar:</span>
               <span id="pCuota"></span>
-              <span>Fecha:</span>
+              <span>Fecha De Emisión:</span>
               <span id="pFecha"></span>
             </div>
             <div class="inv-row">
               <span>Factura Actual:</span>
-              <span id="pActual">---</span>
+              <span id="pActual"></span>
               <span>Factura Anterior:</span>
               <span id="pAnterior"></span>
             </div>
@@ -1179,7 +1192,7 @@ function nuevoCliente(){
   ["cSuscriptor","cNombre","cDireccion","cTelefono","cObservaciones"].forEach(id=>{
     document.getElementById(id).value = "";
   });
-  document.getElementById("cCuota").value = 25000;
+  document.getElementById("cCuota").value = 8000;
   document.getElementById("cEstado").value = "Activo";
 }
 
@@ -1397,6 +1410,7 @@ function abrirVentanaImpresion(numero){
           margin: 0 !important;
           padding: 0 !important;
           background: #fff !important;
+          min-width: 0 !important;
         }
 
         body * {
