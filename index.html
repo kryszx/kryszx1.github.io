@@ -1097,7 +1097,7 @@ function nombreArchivoFactura(numero){
 /* =========================================================
    API GITHUB PAGES -> GOOGLE APPS SCRIPT
    ========================================================= */
-const API_URL = "https://script.google.com/macros/s/AKfycbxcbVusIaFfbgDwYqfzQxeSkmnaEbT7sUpqt7yqER-nkygQBsics1BkNyAzIB6erXUK/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzrdhXod5Xzeo5HP24IyzdAKsT0CGj9FrNmtaz44y_v4i2FHGUzVzbLh4mnElU68DyA/exec";
 
 async function apiRequest(action, data = {}) {
   if (!API_URL || API_URL.includes("PEGA_AQUI")) {
@@ -1644,4 +1644,17 @@ document.addEventListener("input", e=>{
 });
 
 document.addEventListener("change", e=>{
-  if(e.target.closest("#formFactura")){ actualizarPreview();
+  if(e.target.closest("#formFactura")){ actualizarPreview(); }
+});
+
+/* INICIALIZACIÓN */
+document.addEventListener("DOMContentLoaded", ()=>{
+  const hoy = new Date();
+  document.getElementById("fFecha").value = hoy.toISOString().substring(0,10);
+  document.getElementById("fAno").value = hoy.getFullYear();
+  seleccionarTipoDocumento("recibo");
+});
+</script>
+
+</body>
+</html>
