@@ -7,7 +7,7 @@
 
   <style>
     *{box-sizing:border-box}
-    
+
     body{
       margin:0;
       font-family:Arial,Helvetica,sans-serif;
@@ -1086,6 +1086,49 @@ function limpiarNombreArchivo(texto){
     .replace(/^_+|_+$/g,"");
 }
 
+const API_URL = "https://script.google.com/macros/s/AKfycbzrdhXod5Xzeo5HP24IyzdAKsT0CGj9FrNmtaz44y_v4i2FHGUzVzbLh4mnElU68DyA/exec";
+
+async function apiRequest(action, data = {}) {
+  if (!API_URL || API_URL.includes("PEGA_AQUI")) {
+    throw new Error("Configura API_URL con la URL de tu Web App de Google Apps Script.");
+  }
+  if (!action) {
+    throw new Error("No se indicó la acción de la API.");
+  }
+
+  const payload = {
+    accion: action,
+    action: action,
+    data: data || {}
+  };
+
+  const response = await fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify(payload),
+    redirect: "follow",
+    cache: "no-store"
+  });
+
+  const text = await response.text();
+  let result;
+  try {
+    result = JSON.parse(text);
+  } catch (e) {
+    throw new Error("Respuesta inválida de Apps Script: " + text.substring(0, 300));
+  }
+
+  if (!response.ok) {
+    throw new Error(result.error || ("Error HTTP " + response.status));
+  }
+
+  if (result.ok === false) {
+    throw new Error(result.error || "Error en Apps Script.");
+  }
+
+  return Object.prototype.hasOwnProperty.call(result, "data") ? result.data : result;
+}
+
 function nombreArchivoFactura(numero){
   if(!clienteActual) return "Factura_Acueducto.pdf";
   const suscriptor = limpiarNombreArchivo(clienteActual.suscriptor);
@@ -1094,63 +1137,12 @@ function nombreArchivoFactura(numero){
   return `Factura_${suscriptor}_N-${num}_${nombre}.pdf`;
 }
 
-/* =========================================================
-   API GITHUB PAGES -> GOOGLE APPS SCRIPT
-   ========================================================= */
-const API_URL = "https://script.google.com/macros/s/AKfycbzrdhXod5Xzeo5HP24IyzdAKsT0CGj9FrNmtaz44y_v4i2FHGUzVzbLh4mnElU68DyA/exec";
-
-async function apiRequest(action, data = {}) {
-  if (!API_URL || API_URL.includes("PEGA_AQUI")) {
-    throw new Error("Configura API_URL con la URL de tu Web App de Google Apps Script.");
-  }
-
-  if (!action || typeof action !== "string") {
-    throw new Error("No se indicó la acción de la API.");
-  }
-
-  const payload = {
-    accion: action,
-    data: data || {}
-  };
-
-  const response = await fetch(API_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "text/plain;charset=utf-8"
-    },
-    body: JSON.stringify(payload),
-    redirect: "follow",
-    cache: "no-store"
-  });
-
-  const texto = await response.text();
-
-  if (!response.ok) {
-    throw new Error("Error HTTP " + response.status + ": " + texto);
-  }
-
-  let result;
-  try {
-    result = JSON.parse(texto);
-  } catch (e) {
-    throw new Error("Apps Script no devolvió JSON válido: " + texto.substring(0, 300));
-  }
-
-  if (!result.ok) {
-    throw new Error(result.error || "Ocurrió un error en el servidor.");
-  }
-
-  return result.data;
-}
-
-function ejecutarAPI(action, data, onSuccess) {
-  apiRequest(action, data).then(onSuccess).catch(errorUI);
-}
-
 /* CLIENTES */
 function buscarClientesUI(){
   const texto = document.getElementById("buscarCliente").value;
-  ejecutarAPI("buscarClientes", { texto }, mostrarResultadosClientes);
+  apiRequest("buscarClientes", { texto })
+    .then(mostrarResultadosClientes)
+    .catch(errorUI);
 }
 
 function mostrarResultadosClientes(lista){
@@ -1208,10 +1200,12 @@ function guardarClienteUI(){
     return;
   }
 
-  ejecutarAPI("guardarCliente", { cliente }, r=>{
-    mensaje(r.mensaje || "Cliente guardado.");
-    buscarClientesUI();
-  });
+  apiRequest("guardarCliente", { cliente })
+    .then(r=>{
+      mensaje(r.mensaje || "Cliente guardado.");
+      buscarClientesUI();
+    })
+    .catch(errorUI);
 }
 
 /* FACTURACIÓN */
@@ -1229,21 +1223,23 @@ function actualizarTipoDocumentoPreview(){
 
 function buscarParaFactura(){
   const texto = document.getElementById("buscarFactura").value;
-  ejecutarAPI("buscarClientes", { texto }, lista=>{
-    const box = document.getElementById("resultadosFactura");
-    box.innerHTML = "";
-    if(!lista || !lista.length){
-      box.innerHTML = "<p>No se encontraron suscriptores.</p>";
-      return;
-    }
-    lista.forEach(c=>{
-      const div = document.createElement("div");
-      div.className = "result";
-      div.innerHTML = `<strong>#${escapeHtml(c.suscriptor)}</strong> - ${escapeHtml(c.nombre)}`;
-      div.onclick = ()=>{ seleccionarClienteFactura(c); };
-      box.appendChild(div);
-    });
-  });
+  apiRequest("buscarClientes", { texto })
+    .then(lista=>{
+      const box = document.getElementById("resultadosFactura");
+      box.innerHTML = "";
+      if(!lista || !lista.length){
+        box.innerHTML = "<p>No se encontraron suscriptores.</p>";
+        return;
+      }
+      lista.forEach(c=>{
+        const div = document.createElement("div");
+        div.className = "result";
+        div.innerHTML = `<strong>#${escapeHtml(c.suscriptor)}</strong> - ${escapeHtml(c.nombre)}`;
+        div.onclick = ()=>{ seleccionarClienteFactura(c); };
+        box.appendChild(div);
+      });
+    })
+    .catch(errorUI);
 }
 
 function seleccionarClienteFactura(cliente){
@@ -1271,10 +1267,12 @@ function seleccionarClienteFactura(cliente){
 
   document.querySelectorAll("#selectorMeses input").forEach(x=>{ x.checked = false; });
 
-  ejecutarAPI("obtenerHistorial", { suscriptor: cliente.suscriptor }, hist=>{
-    document.getElementById("fAnterior").value = hist && hist.length ? hist[0].factura : "";
-    actualizarPreview();
-  });
+  apiRequest("obtenerHistorial", { suscriptor: cliente.suscriptor })
+    .then(hist=>{
+      document.getElementById("fAnterior").value = hist && hist.length ? hist[0].factura : "";
+      actualizarPreview();
+    })
+    .catch(errorUI);
 
   actualizarPreview();
 }
@@ -1485,15 +1483,17 @@ function generarFacturaUI(){
     fechaSuspension: document.getElementById("fSuspension").value
   };
 
-  ejecutarAPI("generarFactura", { datos }, r=>{
-    document.getElementById("pNumero").innerText = r.numero || "---";
-    document.getElementById("pActual").innerText = r.numero || "---";
-    document.getElementById("pAnterior").innerText = r.facturaAnterior || "";
-    actualizarPreview();
+  apiRequest("generarFactura", { datos })
+    .then(r=>{
+      document.getElementById("pNumero").innerText = r.numero || "---";
+      document.getElementById("pActual").innerText = r.numero || "---";
+      document.getElementById("pAnterior").innerText = r.facturaAnterior || "";
+      actualizarPreview();
 
-    const nombrePDF = nombreArchivoFactura(r.numero);
-    mensaje("Factura #" + (r.numero || "") + " generada. PDF: " + nombrePDF);
-  });
+      const nombrePDF = nombreArchivoFactura(r.numero);
+      mensaje("Factura #" + (r.numero || "") + " generada. PDF: " + nombrePDF);
+    })
+    .catch(errorUI);
 }
 
 /* PAGOS */
@@ -1507,7 +1507,9 @@ function buscarPagosUI(){
   }
 
   box.innerHTML = "<p>Buscando...</p>";
-  ejecutarAPI("buscarClientesParaPago", { texto }, mostrarResultadosPago);
+  apiRequest("buscarClientesParaPago", { texto })
+    .then(mostrarResultadosPago)
+    .catch(errorUI);
 }
 
 function mostrarResultadosPago(lista){
@@ -1598,44 +1600,54 @@ function registrarPagoUI(){
   if(!pago.factura){ mensaje("Selecciona una factura pendiente."); return; }
   if(!pago.valor || Number(pago.valor) <= 0){ mensaje("Ingresa un valor válido."); return; }
 
-  ejecutarAPI("registrarPago", { pago }, r=>{
-    mensaje(r.mensaje || "Pago registrado.");
-    document.getElementById("pagoFactura").value = "";
-    document.getElementById("pagoValor").value = "";
-    buscarPagosUI();
-  });
+  apiRequest("registrarPago", { pago })
+    .then(r=>{
+      mensaje(r.mensaje || "Pago registrado.");
+      document.getElementById("pagoFactura").value = "";
+      document.getElementById("pagoValor").value = "";
+      buscarPagosUI();
+    })
+    .catch(errorUI);
 }
 
 /* HISTORIAL */
 function cargarHistorial(){
   const suscriptor = document.getElementById("buscarHistorial").value.trim();
 
-  ejecutarAPI("obtenerHistorial", { suscriptor }, lista=>{
-    const box = document.getElementById("tablaHistorial");
-    if(!lista || !lista.length){
-      box.innerHTML = "<p>No hay facturas registradas.</p>";
-      return;
-    }
+  apiRequest("obtenerHistorial", { suscriptor })
+    .then(lista=>{
+      const box = document.getElementById("tablaHistorial");
+      if(!lista || !lista.length){
+        box.innerHTML = "<p>No hay facturas registradas.</p>";
+        return;
+      }
 
-    let html = `
-      <table class="invoice-table">
-        <tr>
-          <th>Factura</th><th>Fecha</th><th>Meses</th><th>Total</th><th>Estado</th>
-        </tr>`;
+      let html = `
+        <table class="invoice-table">
+          <tr>
+            <th>Factura</th>
+            <th>Fecha</th>
+            <th>Meses</th>
+            <th>Total</th>
+            <th>Estado</th>
+          </tr>
+      `;
 
-    lista.forEach(x=>{
-      html += `
-        <tr>
-          <td>${escapeHtml(x.factura)}</td>
-          <td>${escapeHtml(x.fecha)}</td>
-          <td>${escapeHtml(x.meses)}</td>
-          <td>${moneda(x.total)}</td>
-          <td>${escapeHtml(x.estado)}</td>
-        </tr>`;
-    });
+      lista.forEach(x=>{
+        html += `
+          <tr>
+            <td>${escapeHtml(x.factura)}</td>
+            <td>${escapeHtml(x.fecha)}</td>
+            <td>${escapeHtml(x.meses)}</td>
+            <td>${moneda(x.total)}</td>
+            <td>${escapeHtml(x.estado)}</td>
+          </tr>
+        `;
+      });
 
-    box.innerHTML = html + "</table>";
-  });
+      box.innerHTML = html + "</table>";
+    })
+    .catch(errorUI);
 }
 
 /* ACTUALIZACIÓN AUTOMÁTICA DE PREVIEW */
