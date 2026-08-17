@@ -1,0 +1,1682 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/kryszx/kryszx1.github.io/refs/heads/main/Logo%20Acuavida.png">
+  <title>Acueducto Acuavida El Recreo</title>
+
+  <style>
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      font-family:Arial,Helvetica,sans-serif;
+      background:#eef2f6;
+      color:#172033
+    }
+
+    .app{
+      display:flex;
+      min-height:100vh
+    }
+
+    .sidebar{
+      width:235px;
+      background:linear-gradient(180deg,#073c70,#031e39);
+      color:#fff;
+      padding:20px 12px;
+      position:fixed;
+      left:0;
+      top:0;
+      bottom:0;
+      z-index:20
+    }
+
+.logo-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px 10px 20px;
+    box-sizing: border-box;
+}
+
+.logo-container img {
+    width: 175px;
+    height: 175px;
+    object-fit: contain;
+    display: block;
+}
+
+    .menu-btn{
+      width:100%;
+      border:0;
+      background:transparent;
+      color:#fff;
+      padding:13px 14px;
+      text-align:left;
+      border-radius:8px;
+      cursor:pointer;
+      margin-bottom:4px;
+      font-size:15px
+    }
+
+    .menu-btn:hover,
+    .menu-btn.active{
+      background:#0875df
+    }
+
+    .content{
+      margin-left:235px;
+      width:calc(100% - 235px);
+      padding:24px
+    }
+
+    .topbar{
+      background:#fff;
+      padding:18px 22px;
+      border-radius:12px;
+      margin-bottom:20px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      box-shadow:0 2px 10px rgba(0,0,0,.05)
+    }
+
+    .topbar h1{
+      margin:0;
+      color:#073c70;
+      font-size:22px
+    }
+
+    .card{
+      background:#fff;
+      border-radius:12px;
+      padding:20px;
+      margin-bottom:20px;
+      box-shadow:0 2px 10px rgba(0,0,0,.05)
+    }
+
+    .card h2{
+      margin:0 0 16px;
+      color:#073c70;
+      font-size:18px
+    }
+
+    .search{
+      display:flex;
+      gap:10px
+    }
+
+    input,
+    select,
+    textarea{
+      width:100%;
+      padding:10px 12px;
+      border:1px solid #ccd5df;
+      border-radius:7px;
+      font-size:14px;
+      background:#fff
+    }
+
+    textarea{
+      min-height:80px;
+      resize:vertical
+    }
+
+    button{
+      border:0;
+      border-radius:7px;
+      padding:10px 16px;
+      cursor:pointer;
+      font-size:14px;
+      font-weight:700
+    }
+
+    .btn-primary{
+      background:#0875df;
+      color:#fff
+    }
+
+    .btn-success{
+      background:#12a05a;
+      color:#fff
+    }
+
+    .btn-secondary{
+      background:#e8edf3;
+      color:#24364a
+    }
+
+    .btn-danger{
+      background:#d94848;
+      color:#fff
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:14px
+    }
+
+    .field label{
+      display:block;
+      font-size:12px;
+      font-weight:700;
+      color:#637083;
+      margin-bottom:5px
+    }
+
+    .results{
+      margin-top:12px
+    }
+
+    .result{
+      padding:12px;
+      border-bottom:1px solid #e7ebef;
+      cursor:pointer
+    }
+
+    .result:hover{
+      background:#f0f6fd
+    }
+
+    .result strong{
+      color:#073c70
+    }
+
+    .client-box{
+      border:1px solid #dce3eb;
+      padding:15px;
+      border-radius:10px;
+      margin-top:12px
+    }
+
+    .client-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center
+    }
+
+    .client-name{
+      font-size:19px;
+      font-weight:700
+    }
+
+    .badge{
+      padding:5px 9px;
+      background:#dff7e9;
+      color:#08783e;
+      border-radius:20px;
+      font-size:12px;
+      font-weight:700
+    }
+
+    .invoice-layout{
+      display:grid;
+      grid-template-columns:minmax(420px,.9fr) minmax(520px,1.1fr);
+      gap:18px;
+      align-items:start
+    }
+
+    .tipo-documento{
+      display:flex;
+      align-items:center;
+      gap:16px;
+      flex-wrap:wrap;
+      padding:10px 12px;
+      border:1px solid #d8e0e8;
+      border-radius:8px;
+      background:#f7f9fb
+    }
+
+    .tipo-documento label{
+      display:flex;
+      gap:6px;
+      align-items:center;
+      font-size:13px;
+      font-weight:700
+    }
+
+    .tipo-documento input{
+      width:auto
+    }
+
+    .invoice-preview{
+      background:#dfe5eb;
+      padding:18px;
+      border-radius:12px
+    }
+
+    .invoice{
+      background:#fff;
+      width:100%;
+      max-width:760px;
+      margin:auto;
+      padding:14px;
+      border:1px solid #555;
+      color:#222;
+      font-size:11px;
+      box-shadow:0 4px 16px rgba(0,0,0,.13);
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+
+    .inv-head{
+      display:grid;
+      grid-template-columns:1fr 115px;
+      border:2px solid #073c70
+    }
+
+    .inv-title{
+      text-align:center;
+      padding:10px
+    }
+
+    .inv-title h2{
+      margin:0;
+      color:#073c70;
+      font-size:18px
+    }
+
+    .inv-title div{
+      margin-top:3px;
+      font-weight:700;
+      font-size:10px
+    }
+
+    .factura-logo {
+    width: 45px;
+    height: 45px;
+    object-fit: contain;
+    display: block;
+    margin: auto;
+}
+
+    .inv-type{
+      display:grid;
+      grid-template-columns:1fr 115px;
+      border:1px solid #555;
+      border-top:0;
+      min-height:34px
+    }
+
+    .inv-types{
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      gap:22px;
+      font-weight:700
+    }
+
+    .inv-num{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border-left:1px solid #555;
+      color:#a32323;
+      font-size:15px;
+      font-weight:700
+    }
+
+    .section-title{
+      margin-top:7px;
+      background:#073c70;
+      color:#fff;
+      border:1px solid #073c70;
+      padding:5px;
+      text-align:center;
+      font-weight:700
+    }
+
+    .inv-row{
+      display:grid;
+      grid-template-columns:105px 1fr 125px 1fr;
+      border-left:1px solid #777;
+      border-right:1px solid #777;
+      border-bottom:1px solid #777;
+      min-height:25px;
+      align-items:center
+    }
+
+    .inv-row span{
+      padding:4px 6px
+    }
+
+    .inv-row span:nth-child(odd){
+      font-weight:700;
+      background:#f1f3f5
+    }
+
+    .inv-row span:nth-child(even){
+      border-left:1px solid #aaa
+    }
+
+    .mora{
+      border:1px solid #777;
+      padding:6px 8px
+    }
+
+    .mora-line{
+      display:flex;
+      justify-content:space-between;
+      margin:2px 0
+    }
+
+    .months-box{
+      border:1px solid #777;
+      padding:7px
+    }
+
+    .month-grid{
+      display:grid;
+      grid-template-columns:repeat(6,1fr);
+      gap:3px
+    }
+
+    .invoice-month{
+      border:1px solid #073c70;
+      padding:5px 2px;
+      text-align:center;
+      font-size:8.5px;
+      background:#fff;
+      white-space:nowrap
+    }
+
+    .invoice-month.selected{
+      background:#e7f1fb;
+      border:2px solid #073c70;
+      font-weight:700
+    }
+
+    .year{
+      text-align:right;
+      margin-top:6px;
+      font-weight:700
+    }
+
+    .invoice-table{
+      width:100%;
+      border-collapse:collapse;
+      margin-top:7px
+    }
+
+    .invoice-table th,
+    .invoice-table td{
+      border:1px solid #555;
+      padding:5px
+    }
+
+    .invoice-table th{
+      background:#eef1f4
+    }
+
+    .invoice-table td:first-child,
+    .invoice-table th:first-child{
+      width:34px;
+      text-align:center
+    }
+
+    .invoice-table td:last-child,
+    .invoice-table th:last-child{
+      width:120px;
+      text-align:right
+    }
+
+    .invoice-table .total-row th{
+      background:#073c70;
+      color:#fff;
+      font-size:12px
+    }
+
+    .abono{
+      color:#a00000
+    }
+
+    .period{
+      border:1px solid #777;
+      margin-top:7px
+    }
+
+    .period-title{
+      background:#073c70;
+      color:#fff;
+      padding:5px;
+      text-align:center;
+      font-weight:700
+    }
+
+    .period-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr
+    }
+
+    .period-grid div{
+      padding:6px;
+      border-top:1px solid #aaa
+    }
+
+    .period-grid div:nth-child(even){
+      border-left:1px solid #aaa
+    }
+
+    .footer-invoice{
+      margin-top:8px;
+      border-top:2px solid #073c70;
+      padding:16px 8px 6px;
+      text-align:center;
+      font-size:9px;
+      font-weight:700
+    }
+
+    .firma-tesorero{
+      width:280px;
+      margin:0 auto;
+      text-align:center
+    }
+
+    .linea-firma{
+      border-top:1px solid #222;
+      width:100%;
+      margin-bottom:5px
+    }
+
+    #mensaje{
+      position:fixed;
+      right:20px;
+      bottom:20px;
+      padding:13px 18px;
+      background:#172033;
+      color:#fff;
+      border-radius:8px;
+      display:none;
+      z-index:9999
+    }
+
+    .botones-pdf{
+      display:flex;
+      gap:10px;
+      margin-top:12px;
+      justify-content:center;
+      flex-wrap:wrap
+    }
+
+    @media(max-width:1100px){
+      .invoice-layout{
+        grid-template-columns:1fr
+      }
+
+      .grid{
+        grid-template-columns:repeat(2,1fr)
+      }
+    }
+
+    @media(max-width:700px){
+      .sidebar{
+        width:70px
+      }
+
+      .logo{
+        font-size:0
+      }
+
+      .content{
+        margin-left:70px;
+        width:calc(100% - 70px);
+        padding:12px
+      }
+
+      .grid{
+        grid-template-columns:1fr
+      }
+
+      .search{
+        flex-direction:column
+      }
+    }
+
+    @media print{
+      @page{
+        size:Letter;
+        margin:6mm
+      }
+
+      body{
+        background:#fff!important
+      }
+
+      body *{
+        visibility:hidden!important
+      }
+
+      #invoicePreview,
+      #invoicePreview *{
+        visibility:visible!important
+      }
+
+      #invoicePreview{
+        position:absolute;
+        left:0;
+        top:0;
+        width:100%;
+        padding:0;
+        background:#fff
+      }
+
+      .invoice-preview{
+        padding:0;
+        background:#fff
+      }
+
+      .invoice{
+        max-width:none;
+        width:100%;
+        margin:0;
+        padding:4px;
+        border:1px solid #555;
+        box-shadow:none;
+        font-size:10px;
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+
+      .inv-title h2{
+        font-size:16px
+      }
+
+      .inv-logo{
+        font-size:22px
+      }
+
+      .inv-row{
+        min-height:22px
+      }
+
+      .inv-row span{
+        padding:3px 5px
+      }
+
+      .invoice-table th,
+      .invoice-table td{
+        padding:4px
+      }
+
+      .no-print{
+        display:none!important
+      }
+
+      .botones-pdf{
+        display:none!important
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <aside class="sidebar no-print">
+    <div class="sidebar"><div class="logo-container"><img src="Logo2.png" alt="">
+    </div>
+    <button class="menu-btn active" onclick="mostrar('inicio')">🏠 Inicio</button>
+    <button class="menu-btn" onclick="mostrar('clientes')">👥 Usuarios</button>
+    <button class="menu-btn" onclick="mostrar('facturacion')">🧾 Facturación</button>
+    <button class="menu-btn" onclick="mostrar('pagos')">💰 Pagos</button>
+    <button class="menu-btn" onclick="mostrar('historial')">📋 Historial</button>
+  </aside>
+
+  <main class="content">
+
+    <div class="topbar no-print">
+      <h1>💧 Acueducto Acuavida Corregimiento El Recreo Nit. 901.888.280-5</h1>
+      <span>👤 Tesorero</span>
+    </div>
+
+    <!-- INICIO -->
+    <section id="inicio">
+      <div class="card">
+        <h2>Bienvenido al sistema</h2>
+        <p>Administra suscriptores, genera facturas, registra pagos y consulta el historial.</p>
+        <button class="btn-primary" onclick="mostrar('facturacion')">🧾 Generar factura</button>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <h2>👥 Usuarios</h2>
+          <div>Buscar o crear usuarios</div>
+        </div>
+        <div class="card">
+          <h2>🧾 Facturación</h2>
+          <div>Generar factura</div>
+        </div>
+        <div class="card">
+          <h2>💰 Pagos</h2>
+          <div>Registrar pagos</div>
+        </div>
+        <div class="card">
+          <h2>📋 Historial</h2>
+          <div>Consultar facturas</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CLIENTES -->
+    <section id="clientes" style="display:none">
+      <div class="card">
+        <h2>👥 Usuarios / Suscriptores</h2>
+        <div class="search">
+          <input id="buscarCliente" placeholder="Número de suscriptor o nombre..." onkeyup="buscarClientesUI()">
+          <button class="btn-primary" onclick="buscarClientesUI()">Buscar Usuario</button>
+          <button class="btn-success" onclick="nuevoCliente()">Crear Usuario</button>
+        </div>
+        <div id="resultadosClientes" class="results"></div>
+      </div>
+
+      <div class="card" id="formCliente" style="display:none">
+        <h2>Información del suscriptor</h2>
+        <div class="grid">
+          <div class="field">
+            <label>Suscriptor N.º</label>
+            <input id="cSuscriptor">
+          </div>
+          <div class="field">
+            <label>Nombre</label>
+            <input id="cNombre">
+          </div>
+          <div class="field">
+            <label>Dirección</label>
+            <input id="cDireccion">
+          </div>
+          <div class="field">
+            <label>Teléfono</label>
+            <input id="cTelefono">
+          </div>
+          <div class="field">
+            <label>Cuota familiar acueducto</label>
+            <input id="cCuota" type="number">
+          </div>
+          <div class="field">
+            <label>Estado</label>
+            <select id="cEstado">
+              <option>Activo</option>
+              <option>Suspendido</option>
+            </select>
+          </div>
+        </div>
+        <br>
+        <label>Observaciones</label>
+        <textarea id="cObservaciones"></textarea>
+        <br><br>
+        <button class="btn-success" onclick="guardarClienteUI()">Guardar cliente</button>
+      </div>
+    </section>
+
+    <!-- FACTURACION -->
+    <section id="facturacion" style="display:none">
+      <div class="invoice-layout">
+        <div>
+          <!-- BUSCAR SUSCRIPTOR -->
+          <div class="card no-print">
+            <h2>🔎 Buscar suscriptor</h2>
+            <div class="search">
+              <input id="buscarFactura" placeholder="Número de suscriptor o nombre...">
+              <button class="btn-primary" onclick="buscarParaFactura()">Buscar</button>
+            </div>
+            <div id="resultadosFactura"></div>
+          </div>
+
+          <!-- FORMULARIO FACTURA -->
+          <div class="card no-print" id="formFactura" style="display:none">
+            <h2>🧾 Datos de la factura</h2>
+            <div id="clienteSeleccionado"></div>
+            <br>
+            <div class="tipo-documento">
+              <strong>Tipo:</strong>
+              <label>
+                <input type="checkbox" id="tipoRecibo" onchange="seleccionarTipoDocumento('recibo')">
+                RECIBO DE COBRO
+              </label>
+              <label>
+                <input type="checkbox" id="tipoVenta" onchange="seleccionarTipoDocumento('venta')">
+                FACTURA DE VENTA
+              </label>
+            </div>
+            <br>
+            <div class="grid">
+              <div class="field">
+                <label>Fecha</label>
+                <input id="fFecha" type="date">
+              </div>
+              <div class="field">
+                <label>Factura anterior</label>
+                <input id="fAnterior" readonly>
+              </div>
+              <div class="field">
+                <label>Cuota Acueducto por mes</label>
+                <input id="fCuota" type="number">
+              </div>
+              <div class="field">
+                <label>Mora</label>
+                <input id="fMora" type="number" value="0">
+              </div>
+              <div class="field">
+                <label>Mora correspondiente a</label>
+                <input id="fMoraMeses">
+              </div>
+              <div class="field">
+                <label>Matrícula</label>
+                <input id="fMatricula" type="number" value="0">
+              </div>
+              <div class="field">
+                <label>Reconexión</label>
+                <input id="fReconexion" type="number" value="0">
+              </div>
+              <div class="field">
+                <label>Abono</label>
+                <input id="fAbono" type="number" value="0">
+              </div>
+              <div class="field">
+                <label>Otros</label>
+                <input id="fOtros" type="number" value="0">
+              </div>
+            </div>
+            <br>
+            <h3>Meses a cancelar</h3>
+            <div class="grid" style="grid-template-columns:repeat(4,1fr)" id="selectorMeses">
+              <label><input type="checkbox" value="ENERO"> Enero</label>
+              <label><input type="checkbox" value="FEBRERO"> Febrero</label>
+              <label><input type="checkbox" value="MARZO"> Marzo</label>
+              <label><input type="checkbox" value="ABRIL"> Abril</label>
+              <label><input type="checkbox" value="MAYO"> Mayo</label>
+              <label><input type="checkbox" value="JUNIO"> Junio</label>
+              <label><input type="checkbox" value="JULIO"> Julio</label>
+              <label><input type="checkbox" value="AGOSTO"> Agosto</label>
+              <label><input type="checkbox" value="SEPTIEMBRE"> Septiembre</label>
+              <label><input type="checkbox" value="OCTUBRE"> Octubre</label>
+              <label><input type="checkbox" value="NOVIEMBRE"> Noviembre</label>
+              <label><input type="checkbox" value="DICIEMBRE"> Diciembre</label>
+            </div>
+            <p>
+              <strong>Meses seleccionados:</strong> <span id="cantidadMeses">0</span> &nbsp; | &nbsp;
+              <strong>Valor de cuotas:</strong> <span id="valorMeses">$0</span>
+            </p>
+            <div class="grid">
+              <div class="field">
+                <label>Año</label>
+                <input id="fAno" type="number">
+              </div>
+              <div class="field">
+                <label>Período desde</label>
+                <input id="fDesde" type="text" placeholder="15 de agosto">
+              </div>
+              <div class="field">
+                <label>Período hasta</label>
+                <input id="fHasta" type="text" placeholder="30 de agosto">
+              </div>
+              <div class="field">
+                <label>Pagar antes de</label>
+                <input id="fPagarAntes" type="date">
+              </div>
+              <div class="field">
+                <label>Fecha de suspensión</label>
+                <input id="fSuspension" type="date">
+              </div>
+            </div>
+            <br>
+            <button class="btn-success" onclick="generarFacturaUI()">💾 Generar factura</button>
+          </div>
+        </div>
+
+        <!-- VISTA FACTURA -->
+        <div id="invoicePreview" class="invoice-preview">
+          <div class="invoice">
+            <div class="inv-head">
+              <div class="inv-title">
+                <h2>ACUEDUCTO ACUAVIDA EL RECREO</h2>
+                <div>NIT. 901.888.280 - 5</div>
+              </div>
+              <img src="Logo1.png" class="factura-logo" alt="">
+            </div>
+
+            <div class="inv-type">
+              <div class="inv-types">
+                <span id="pTipoRecibo">☑ RECIBO DE COBRO</span>
+                <span id="pTipoVenta">☐ FACTURA DE VENTA</span>
+              </div>
+              <div class="inv-num">
+                N.º <span id="pNumero">---</span>
+              </div>
+            </div>
+
+            <div class="section-title">DATOS DEL SUSCRIPTOR</div>
+            <div class="inv-row">
+              <span>Nombre:</span>
+              <span id="pNombre"></span>
+              <span>Suscriptor No.:</span>
+              <span id="pSuscriptor"></span>
+            </div>
+            <div class="inv-row">
+              <span>Cuota Familiar Acueducto:</span>
+              <span id="pCuota"></span>
+              <span>Fecha:</span>
+              <span id="pFecha"></span>
+            </div>
+            <div class="inv-row">
+              <span>Factura Actual:</span>
+              <span id="pActual">---</span>
+              <span>Factura Anterior:</span>
+              <span id="pAnterior"></span>
+            </div>
+
+            <div class="section-title">MORA</div>
+            <div class="mora">
+              <div class="mora-line">
+                <span>Mora:</span>
+                <strong id="pMora">$0</strong>
+              </div>
+              <div class="mora-line">
+                <span>Correspondiente a:</span>
+                <strong id="pMoraMeses"></strong>
+              </div>
+              <div style="text-align:center; font-size:10px; margin-top:2px">
+                mes(es) del Servicio de Agua.
+              </div>
+            </div>
+
+            <div class="section-title">MESES A CANCELAR</div>
+            <div class="months-box">
+              <div id="pMeses" class="month-grid"></div>
+              <div class="year">
+                AÑO <span id="pAno">----</span>
+              </div>
+            </div>
+
+            <div class="section-title">DETALLE DEL COBRO</div>
+            <table class="invoice-table">
+              <thead>
+                <tr>
+                  <th>No.</th>
+                  <th>DETALLE</th>
+                  <th>VALOR</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td>Cuota Familiar Acueducto</td>
+                  <td id="pCuotaTabla">$0</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td><strong>Cuotas por meses seleccionados</strong></td>
+                  <td id="pCuotasMeses">$0</td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>Matrícula</td>
+                  <td id="pMatricula">$0</td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td>Reconexión</td>
+                  <td id="pReconexion">$0</td>
+                </tr>
+                <tr>
+                  <td>4</td>
+                  <td>Abono</td>
+                  <td id="pAbono" class="abono">$0</td>
+                </tr>
+                <tr>
+                  <td>5</td>
+                  <td>Otros</td>
+                  <td id="pOtros">$0</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td>Mora</td>
+                  <td id="pMoraTabla">$0</td>
+                </tr>
+                <tr class="total-row">
+                  <th colspan="2">TOTAL A PAGAR</th>
+                  <th id="pTotal">$0</th>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="period">
+              <div class="period-title">PERÍODO DE FACTURACIÓN</div>
+              <div class="period-grid">
+                <div>Del: <strong id="pDesde"></strong></div>
+                <div>Al: <strong id="pHasta"></strong></div>
+                <div>Pague antes de: <strong id="pPagarAntes"></strong></div>
+                <div>Fecha de Suspensión: <strong id="pSuspension"></strong></div>
+              </div>
+            </div>
+
+            <div class="footer-invoice">
+              <div class="firma-tesorero">
+                <div class="linea-firma"></div>
+                <strong>FIRMA DEL TESORERO</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="botones-pdf no-print">
+            <button class="btn-success" onclick="guardarPdfFactura()">💾 Guardar PDF</button>
+            <button class="btn-primary" onclick="imprimirFactura()">🖨️ Imprimir factura</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGOS -->
+    <section id="pagos" style="display:none">
+      <div class="card">
+        <h2>💰 Registrar pago</h2>
+        <div class="search">
+          <input id="buscarPago" placeholder="Número de suscriptor o nombre..." onkeyup="buscarPagosUI()">
+          <button class="btn-primary" onclick="buscarPagosUI()">🔎 Buscar</button>
+        </div>
+        <div id="resultadosPago" class="results"></div>
+      </div>
+
+      <div class="card" id="formPago" style="display:none">
+        <h2>💵 Datos del pago</h2>
+        <div id="clientePagoSeleccionado"></div>
+        <br>
+        <h3>Facturas pendientes</h3>
+        <div id="facturasPendientesPago"></div>
+        <br>
+        <div class="grid">
+          <div class="field">
+            <label>Factura</label>
+            <input id="pagoFactura" readonly>
+          </div>
+          <div class="field">
+            <label>Suscriptor</label>
+            <input id="pagoSuscriptor" readonly>
+          </div>
+          <div class="field">
+            <label>Nombre</label>
+            <input id="pagoNombre" readonly>
+          </div>
+          <div class="field">
+            <label>Valor</label>
+            <input id="pagoValor" type="number">
+          </div>
+        </div>
+        <br>
+        <label>Concepto</label>
+        <input id="pagoConcepto" value="Pago de servicio de agua">
+        <br><br>
+        <button class="btn-success" onclick="registrarPagoUI()">💰 Registrar pago</button>
+      </div>
+    </section>
+
+    <!-- HISTORIAL -->
+    <section id="historial" style="display:none">
+      <div class="card">
+        <h2>📋 Historial del suscriptor</h2>
+        <div class="search">
+          <input id="buscarHistorial" placeholder="Número de suscriptor">
+          <button class="btn-primary" onclick="cargarHistorial()">Buscar</button>
+        </div>
+        <div id="tablaHistorial"></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<div id="mensaje"></div>
+
+<script>
+let clienteActual = null;
+
+/* NAVEGACIÓN */
+function mostrar(id){
+  ["inicio","clientes","facturacion","pagos","historial"].forEach(x=>{
+    const elemento = document.getElementById(x);
+    if(elemento){
+      elemento.style.display = x === id ? "block" : "none";
+    }
+  });
+
+  document.querySelectorAll(".menu-btn").forEach(b=>{
+    b.classList.remove("active");
+  });
+
+  const map = { inicio:0, clientes:1, facturacion:2, pagos:3, historial:4 };
+  if(map[id] !== undefined){
+    document.querySelectorAll(".menu-btn")[map[id]].classList.add("active");
+  }
+}
+
+/* MENSAJES */
+function mensaje(texto){
+  const box = document.getElementById("mensaje");
+  box.innerText = texto;
+  box.style.display = "block";
+  setTimeout(()=>{ box.style.display = "none"; },3500);
+}
+
+function errorUI(error){
+  console.error(error);
+  mensaje(error && error.message ? error.message : "Ocurrió un error.");
+}
+
+/* UTILIDADES */
+function moneda(numero){
+  return "$" + Number(numero || 0).toLocaleString("es-CO");
+}
+
+function formatearFecha(fecha){
+  if(!fecha) return "";
+  const p = String(fecha).split("-");
+  return p.length === 3 ? p[2] + "/" + p[1] + "/" + p[0] : fecha;
+}
+
+function escapeHtml(texto){
+  return String(texto ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+
+/* NOMBRE ARCHIVO PDF */
+function limpiarNombreArchivo(texto){
+  return String(texto || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g,"")
+    .replace(/[^a-zA-Z0-9_-]+/g,"_")
+    .replace(/^_+|_+$/g,"");
+}
+
+const API_URL = "https://script.google.com/macros/s/AKfycbzrdhXod5Xzeo5HP24IyzdAKsT0CGj9FrNmtaz44y_v4i2FHGUzVzbLh4mnElU68DyA/exec";
+
+async function apiRequest(action, data = {}) {
+  if (!API_URL || API_URL.includes("PEGA_AQUI")) {
+    throw new Error("Configura API_URL con la URL de tu Web App de Google Apps Script.");
+  }
+  if (!action) {
+    throw new Error("No se indicó la acción de la API.");
+  }
+
+  const payload = {
+    accion: action,
+    action: action,
+    data: data || {}
+  };
+
+  const response = await fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify(payload),
+    redirect: "follow",
+    cache: "no-store"
+  });
+
+  const text = await response.text();
+  let result;
+  try {
+    result = JSON.parse(text);
+  } catch (e) {
+    throw new Error("Respuesta inválida de Apps Script: " + text.substring(0, 300));
+  }
+
+  if (!response.ok) {
+    throw new Error(result.error || ("Error HTTP " + response.status));
+  }
+
+  if (result.ok === false) {
+    throw new Error(result.error || "Error en Apps Script.");
+  }
+
+  return Object.prototype.hasOwnProperty.call(result, "data") ? result.data : result;
+}
+
+function nombreArchivoFactura(numero){
+  if(!clienteActual) return "Factura_Acueducto.pdf";
+  const suscriptor = limpiarNombreArchivo(clienteActual.suscriptor);
+  const nombre = limpiarNombreArchivo(clienteActual.nombre);
+  const num = limpiarNombreArchivo(numero || document.getElementById("pNumero").innerText);
+  return `Factura_${suscriptor}_N-${num}_${nombre}.pdf`;
+}
+
+/* CLIENTES */
+function buscarClientesUI(){
+  const texto = document.getElementById("buscarCliente").value;
+  apiRequest("buscarClientes", { texto })
+    .then(mostrarResultadosClientes)
+    .catch(errorUI);
+}
+
+function mostrarResultadosClientes(lista){
+  const box = document.getElementById("resultadosClientes");
+  box.innerHTML = "";
+  if(!lista || !lista.length){
+    box.innerHTML = "<p>No se encontraron clientes.</p>";
+    return;
+  }
+  lista.forEach(c=>{
+    const div = document.createElement("div");
+    div.className = "result";
+    div.innerHTML = `
+      <strong>#${escapeHtml(c.suscriptor)}</strong> - ${escapeHtml(c.nombre)}
+      <br><small>${escapeHtml(c.direccion || "")}</small>
+    `;
+    div.onclick = ()=>{ editarCliente(c); };
+    box.appendChild(div);
+  });
+}
+
+function nuevoCliente(){
+  document.getElementById("formCliente").style.display = "block";
+  ["cSuscriptor","cNombre","cDireccion","cTelefono","cObservaciones"].forEach(id=>{
+    document.getElementById(id).value = "";
+  });
+  document.getElementById("cCuota").value = 25000;
+  document.getElementById("cEstado").value = "Activo";
+}
+
+function editarCliente(c){
+  document.getElementById("formCliente").style.display = "block";
+  document.getElementById("cSuscriptor").value = c.suscriptor || "";
+  document.getElementById("cNombre").value = c.nombre || "";
+  document.getElementById("cDireccion").value = c.direccion || "";
+  document.getElementById("cTelefono").value = c.telefono || "";
+  document.getElementById("cCuota").value = c.cuota || 0;
+  document.getElementById("cEstado").value = c.estado || "Activo";
+  document.getElementById("cObservaciones").value = c.observaciones || "";
+}
+
+function guardarClienteUI(){
+  const cliente = {
+    suscriptor: document.getElementById("cSuscriptor").value.trim(),
+    nombre: document.getElementById("cNombre").value.trim(),
+    direccion: document.getElementById("cDireccion").value.trim(),
+    telefono: document.getElementById("cTelefono").value.trim(),
+    cuota: document.getElementById("cCuota").value,
+    estado: document.getElementById("cEstado").value,
+    observaciones: document.getElementById("cObservaciones").value
+  };
+
+  if(!cliente.suscriptor || !cliente.nombre){
+    mensaje("Ingresa suscriptor y nombre.");
+    return;
+  }
+
+  apiRequest("guardarCliente", { cliente })
+    .then(r=>{
+      mensaje(r.mensaje || "Cliente guardado.");
+      buscarClientesUI();
+    })
+    .catch(errorUI);
+}
+
+/* FACTURACIÓN */
+function seleccionarTipoDocumento(tipo){
+  document.getElementById("tipoRecibo").checked = tipo === "recibo";
+  document.getElementById("tipoVenta").checked = tipo === "venta";
+  actualizarTipoDocumentoPreview();
+}
+
+function actualizarTipoDocumentoPreview(){
+  const recibo = document.getElementById("tipoRecibo").checked;
+  document.getElementById("pTipoRecibo").innerText = recibo ? "☑ RECIBO DE COBRO" : "☐ RECIBO DE COBRO";
+  document.getElementById("pTipoVenta").innerText = !recibo && document.getElementById("tipoVenta").checked ? "☑ FACTURA DE VENTA" : "☐ FACTURA DE VENTA";
+}
+
+function buscarParaFactura(){
+  const texto = document.getElementById("buscarFactura").value;
+  apiRequest("buscarClientes", { texto })
+    .then(lista=>{
+      const box = document.getElementById("resultadosFactura");
+      box.innerHTML = "";
+      if(!lista || !lista.length){
+        box.innerHTML = "<p>No se encontraron suscriptores.</p>";
+        return;
+      }
+      lista.forEach(c=>{
+        const div = document.createElement("div");
+        div.className = "result";
+        div.innerHTML = `<strong>#${escapeHtml(c.suscriptor)}</strong> - ${escapeHtml(c.nombre)}`;
+        div.onclick = ()=>{ seleccionarClienteFactura(c); };
+        box.appendChild(div);
+      });
+    })
+    .catch(errorUI);
+}
+
+function seleccionarClienteFactura(cliente){
+  clienteActual = cliente;
+  seleccionarTipoDocumento("recibo");
+
+  document.getElementById("formFactura").style.display = "block";
+  document.getElementById("clienteSeleccionado").innerHTML = `
+    <div class="client-box">
+      <div class="client-header">
+        <div class="client-name">${escapeHtml(cliente.nombre)}</div>
+        <span class="badge">${escapeHtml(cliente.estado || "Activo")}</span>
+      </div>
+      <br>
+      Suscriptor: <strong>${escapeHtml(cliente.suscriptor)}</strong> &nbsp;&nbsp;
+      Cuota mensual: <strong>${moneda(cliente.cuota)}</strong>
+    </div>
+  `;
+
+  const hoy = new Date();
+  document.getElementById("fFecha").value = hoy.toISOString().substring(0,10);
+  document.getElementById("fAno").value = hoy.getFullYear();
+  document.getElementById("fCuota").value = Number(cliente.cuota) || 0;
+  document.getElementById("fAnterior").value = "Cargando...";
+
+  document.querySelectorAll("#selectorMeses input").forEach(x=>{ x.checked = false; });
+
+  apiRequest("obtenerHistorial", { suscriptor: cliente.suscriptor })
+    .then(hist=>{
+      document.getElementById("fAnterior").value = hist && hist.length ? hist[0].factura : "";
+      actualizarPreview();
+    })
+    .catch(errorUI);
+
+  actualizarPreview();
+}
+
+function obtenerMesesSeleccionados(){
+  return Array.from(
+    document.querySelectorAll("#selectorMeses input[type=checkbox]:checked")
+  ).map(x=>x.value);
+}
+
+/* PREVISUALIZACIÓN */
+function actualizarPreview(){
+  if(!clienteActual) return;
+
+  const cuota = Number(document.getElementById("fCuota").value) || 0;
+  const meses = obtenerMesesSeleccionados();
+  const cantidad = meses.length;
+  const valorMeses = cuota * cantidad;
+
+  const mora = Number(document.getElementById("fMora").value) || 0;
+  const matricula = Number(document.getElementById("fMatricula").value) || 0;
+  const reconexion = Number(document.getElementById("fReconexion").value) || 0;
+  const abono = Number(document.getElementById("fAbono").value) || 0;
+  const otros = Number(document.getElementById("fOtros").value) || 0;
+
+  const total = valorMeses + mora + matricula + reconexion + otros - abono;
+
+  document.getElementById("pNombre").innerText = clienteActual.nombre || "";
+  document.getElementById("pSuscriptor").innerText = clienteActual.suscriptor || "";
+  document.getElementById("pCuota").innerText = moneda(cuota);
+  document.getElementById("pCuotaTabla").innerText = moneda(cuota);
+  document.getElementById("pCuotasMeses").innerText = moneda(valorMeses);
+  document.getElementById("pMora").innerText = moneda(mora);
+  document.getElementById("pMoraTabla").innerText = moneda(mora);
+  document.getElementById("pMoraMeses").innerText = document.getElementById("fMoraMeses").value || "______________";
+  document.getElementById("pMatricula").innerText = moneda(matricula);
+  document.getElementById("pReconexion").innerText = moneda(reconexion);
+  document.getElementById("pAbono").innerText = moneda(abono);
+  document.getElementById("pOtros").innerText = moneda(otros);
+  document.getElementById("pTotal").innerText = moneda(total);
+  document.getElementById("pFecha").innerText = formatearFecha(document.getElementById("fFecha").value);
+  document.getElementById("pAnterior").innerText = document.getElementById("fAnterior").value || "";
+  document.getElementById("pDesde").innerText = document.getElementById("fDesde").value || "";
+  document.getElementById("pHasta").innerText = document.getElementById("fHasta").value || "";
+  document.getElementById("pPagarAntes").innerText = formatearFecha(document.getElementById("fPagarAntes").value);
+  document.getElementById("pSuspension").innerText = formatearFecha(document.getElementById("fSuspension").value);
+  document.getElementById("pAno").innerText = document.getElementById("fAno").value || "----";
+  document.getElementById("cantidadMeses").innerText = cantidad;
+  document.getElementById("valorMeses").innerText = moneda(valorMeses);
+
+  const box = document.getElementById("pMeses");
+  box.innerHTML = "";
+  meses.forEach(m=>{
+    const d = document.createElement("div");
+    d.className = "invoice-month selected";
+    d.innerText = "☑ " + m;
+    box.appendChild(d);
+  });
+}
+
+/* IMPRIMIR / GUARDAR PDF */
+function imprimirFactura(){
+  if(!clienteActual){ mensaje("Selecciona primero un suscriptor."); return; }
+  const numero = document.getElementById("pNumero").innerText;
+  if(!numero || numero === "---"){ mensaje("Primero genera la factura."); return; }
+  abrirVentanaImpresion(numero);
+}
+
+function guardarPdfFactura(){
+  if(!clienteActual){ mensaje("Selecciona primero un suscriptor."); return; }
+  const numero = document.getElementById("pNumero").innerText;
+  if(!numero || numero === "---"){ mensaje("Primero genera y guarda la factura."); return; }
+  const nombreArchivo = nombreArchivoFactura(numero);
+  mensaje("PDF: " + nombreArchivo);
+  abrirVentanaImpresion(numero);
+}
+
+/* VENTANA DE IMPRESIÓN */
+function abrirVentanaImpresion(numero){
+  const nombreArchivo = nombreArchivoFactura(numero);
+  const factura = document.querySelector("#invoicePreview .invoice");
+
+  if(!factura){
+    mensaje("No se encontró la factura para imprimir.");
+    return;
+  }
+
+  const facturaClon = factura.cloneNode(true);
+  const ventana = window.open("", "_blank", "width=900,height=900");
+
+  if(!ventana){
+    mensaje("El navegador bloqueó la ventana. Permite ventanas emergentes.");
+    return;
+  }
+
+  let estilos = "";
+  document.querySelectorAll("style").forEach(style=>{
+    estilos += style.innerHTML;
+  });
+
+  ventana.document.open();
+  ventana.document.write(`
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+      <meta charset="UTF-8">
+      <title>${escapeHtml(nombreArchivo.replace(".pdf",""))}</title>
+      <style>
+        ${estilos}
+        
+        html, body {
+          margin: 0 !important;
+          padding: 0 !important;
+          background: #fff !important;
+        }
+
+        body * {
+          visibility: visible !important;
+        }
+
+        .invoice-preview {
+          display: block !important;
+          visibility: visible !important;
+          width: 100% !important;
+          padding: 0 !important;
+          margin: 0 !important;
+          background: #fff !important;
+        }
+
+        .invoice {
+          display: block !important;
+          visibility: visible !important;
+          width: 100% !important;
+          max-width: none !important;
+          margin: 0 auto !important;
+          padding: 6px !important;
+          border: 1px solid #555 !important;
+          box-shadow: none !important;
+          font-size: 10px !important;
+          page-break-inside: avoid !important;
+          break-inside: avoid !important;
+        }
+
+        .no-print {
+          display: none !important;
+        }
+
+        @media print {
+          @page {
+            size: Letter;
+            margin: 6mm;
+          }
+          body {
+            background: #fff !important;
+          }
+        }
+      </style>
+    </head>
+    <body>
+      <div class="invoice-preview">
+        ${facturaClon.outerHTML}
+      </div>
+      <script>
+        window.onload = function(){
+          setTimeout(function(){
+            window.focus();
+            window.print();
+          }, 500);
+        };
+        window.onafterprint = function(){
+          setTimeout(function(){
+            window.close();
+          }, 300);
+        };
+      <\/script>
+    </body>
+    </html>
+  `);
+  ventana.document.close();
+}
+
+/* GENERAR FACTURA */
+function generarFacturaUI(){
+  if(!clienteActual){ mensaje("Selecciona primero un suscriptor."); return; }
+
+  const meses = obtenerMesesSeleccionados();
+  if(!meses.length){ mensaje("Selecciona al menos un mes."); return; }
+
+  const ano = Number(document.getElementById("fAno").value) || new Date().getFullYear();
+  const tipoDocumento = document.getElementById("tipoVenta").checked ? "FACTURA DE VENTA" : "RECIBO DE COBRO";
+
+  const datos = {
+    suscriptor: clienteActual.suscriptor,
+    tipoDocumento: tipoDocumento,
+    fecha: document.getElementById("fFecha").value,
+    cuota: Number(document.getElementById("fCuota").value) || 0,
+    mora: Number(document.getElementById("fMora").value) || 0,
+    moraMeses: document.getElementById("fMoraMeses").value,
+    matricula: Number(document.getElementById("fMatricula").value) || 0,
+    reconexion: Number(document.getElementById("fReconexion").value) || 0,
+    abono: Number(document.getElementById("fAbono").value) || 0,
+    otros: Number(document.getElementById("fOtros").value) || 0,
+    meses: meses,
+    anos: meses.map(()=>ano),
+    periodoDesde: document.getElementById("fDesde").value,
+    periodoHasta: document.getElementById("fHasta").value,
+    pagarAntes: document.getElementById("fPagarAntes").value,
+    fechaSuspension: document.getElementById("fSuspension").value
+  };
+
+  apiRequest("generarFactura", { datos })
+    .then(r=>{
+      document.getElementById("pNumero").innerText = r.numero || "---";
+      document.getElementById("pActual").innerText = r.numero || "---";
+      document.getElementById("pAnterior").innerText = r.facturaAnterior || "";
+      actualizarPreview();
+
+      const nombrePDF = nombreArchivoFactura(r.numero);
+      mensaje("Factura #" + (r.numero || "") + " generada. PDF: " + nombrePDF);
+    })
+    .catch(errorUI);
+}
+
+/* PAGOS */
+function buscarPagosUI(){
+  const texto = document.getElementById("buscarPago").value.trim();
+  const box = document.getElementById("resultadosPago");
+
+  if(!texto){
+    box.innerHTML = "<p>Escribe el número de suscriptor o el nombre.</p>";
+    return;
+  }
+
+  box.innerHTML = "<p>Buscando...</p>";
+  apiRequest("buscarClientesParaPago", { texto })
+    .then(mostrarResultadosPago)
+    .catch(errorUI);
+}
+
+function mostrarResultadosPago(lista){
+  const box = document.getElementById("resultadosPago");
+  box.innerHTML = "";
+
+  if(!lista || !lista.length){
+    box.innerHTML = "<p>No se encontró ningún cliente.</p>";
+    return;
+  }
+
+  lista.forEach(item=>{
+    const c = item.cliente;
+    const div = document.createElement("div");
+    div.className = "result";
+    div.innerHTML = `
+      <strong>#${escapeHtml(c.suscriptor)}</strong> - ${escapeHtml(c.nombre)}
+      <br><small>${item.facturas.length} factura(s) pendiente(s)</small>
+    `;
+    div.onclick = ()=>{ seleccionarClientePago(item); };
+    box.appendChild(div);
+  });
+}
+
+function seleccionarClientePago(item){
+  const c = item.cliente;
+  document.getElementById("formPago").style.display = "block";
+  document.getElementById("clientePagoSeleccionado").innerHTML = `
+    <div class="client-box">
+      <div class="client-header">
+        <div class="client-name">${escapeHtml(c.nombre)}</div>
+        <span class="badge">${escapeHtml(c.estado || "Activo")}</span>
+      </div>
+      <br>
+      Suscriptor: <strong>${escapeHtml(c.suscriptor)}</strong> &nbsp;&nbsp;
+      Cuota: <strong>${moneda(c.cuota)}</strong>
+    </div>
+  `;
+
+  document.getElementById("pagoSuscriptor").value = c.suscriptor;
+  document.getElementById("pagoNombre").value = c.nombre;
+
+  mostrarFacturasPendientes(item.facturas);
+}
+
+function mostrarFacturasPendientes(facturas){
+  const box = document.getElementById("facturasPendientesPago");
+  box.innerHTML = "";
+
+  if(!facturas || !facturas.length){
+    box.innerHTML = '<div class="result">🟢 Este suscriptor no tiene facturas pendientes.</div>';
+    document.getElementById("pagoFactura").value = "";
+    document.getElementById("pagoValor").value = "";
+    return;
+  }
+
+  facturas.forEach(f=>{
+    const div = document.createElement("div");
+    div.className = "result";
+    div.innerHTML = `
+      <strong>Factura #${escapeHtml(f.factura)}</strong><br>
+      📅 ${escapeHtml(f.fecha)}<br>
+      📆 ${escapeHtml(f.meses || "Sin meses")}<br>
+      💰 <strong>${moneda(f.total)}</strong><br>
+      🔴 PENDIENTE
+    `;
+    div.onclick = ()=>{ seleccionarFacturaPago(f); };
+    box.appendChild(div);
+  });
+}
+
+function seleccionarFacturaPago(f){
+  document.getElementById("pagoFactura").value = f.factura;
+  document.getElementById("pagoValor").value = f.total;
+  mensaje("Factura #" + f.factura + " seleccionada.");
+}
+
+function registrarPagoUI(){
+  const pago = {
+    factura: document.getElementById("pagoFactura").value,
+    suscriptor: document.getElementById("pagoSuscriptor").value,
+    nombre: document.getElementById("pagoNombre").value,
+    valor: document.getElementById("pagoValor").value,
+    concepto: document.getElementById("pagoConcepto").value
+  };
+
+  if(!pago.suscriptor){ mensaje("Selecciona primero un suscriptor."); return; }
+  if(!pago.factura){ mensaje("Selecciona una factura pendiente."); return; }
+  if(!pago.valor || Number(pago.valor) <= 0){ mensaje("Ingresa un valor válido."); return; }
+
+  apiRequest("registrarPago", { pago })
+    .then(r=>{
+      mensaje(r.mensaje || "Pago registrado.");
+      document.getElementById("pagoFactura").value = "";
+      document.getElementById("pagoValor").value = "";
+      buscarPagosUI();
+    })
+    .catch(errorUI);
+}
+
+/* HISTORIAL */
+function cargarHistorial(){
+  const suscriptor = document.getElementById("buscarHistorial").value.trim();
+
+  apiRequest("obtenerHistorial", { suscriptor })
+    .then(lista=>{
+      const box = document.getElementById("tablaHistorial");
+      if(!lista || !lista.length){
+        box.innerHTML = "<p>No hay facturas registradas.</p>";
+        return;
+      }
+
+      let html = `
+        <table class="invoice-table">
+          <tr>
+            <th>Factura</th>
+            <th>Fecha</th>
+            <th>Meses</th>
+            <th>Total</th>
+            <th>Estado</th>
+          </tr>
+      `;
+
+      lista.forEach(x=>{
+        html += `
+          <tr>
+            <td>${escapeHtml(x.factura)}</td>
+            <td>${escapeHtml(x.fecha)}</td>
+            <td>${escapeHtml(x.meses)}</td>
+            <td>${moneda(x.total)}</td>
+            <td>${escapeHtml(x.estado)}</td>
+          </tr>
+        `;
+      });
+
+      box.innerHTML = html + "</table>";
+    })
+    .catch(errorUI);
+}
+
+/* ACTUALIZACIÓN AUTOMÁTICA DE PREVIEW */
+document.addEventListener("input", e=>{
+  if(e.target.closest("#formFactura")){ actualizarPreview(); }
+});
+
+document.addEventListener("change", e=>{
+  if(e.target.closest("#formFactura")){ actualizarPreview(); }
+});
+
+/* INICIALIZACIÓN */
+document.addEventListener("DOMContentLoaded", ()=>{
+  const hoy = new Date();
+  document.getElementById("fFecha").value = hoy.toISOString().substring(0,10);
+  document.getElementById("fAno").value = hoy.getFullYear();
+  seleccionarTipoDocumento("recibo");
+});
+</script>
+
+</body>
+</html>
