@@ -3,6 +3,7 @@
 <head>
   <base target="_top">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/kryszx/kryszx1.github.io/refs/heads/main/Logo%20Acuavida.png">
   <title>Acueducto Acuavida El Recreo</title>
 
   <style>
@@ -32,13 +33,21 @@
       z-index:20
     }
 
-    .logo{
-      font-size:19px;
-      font-weight:700;
-      padding:12px;
-      margin-bottom:25px;
-      line-height:1.3
-    }
+.logo-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px 10px 20px;
+    box-sizing: border-box;
+}
+
+.logo-container img {
+    width: 175px;
+    height: 175px;
+    object-fit: contain;
+    display: block;
+}
 
     .menu-btn{
       width:100%;
@@ -609,7 +618,8 @@
 <div class="app">
 
   <aside class="sidebar no-print">
-    <div class="logo">PANEL CONTROL</div>
+    <div class="sidebar"><div class="logo-container"><img src="Logo.png" alt="">
+    </div>
     <button class="menu-btn active" onclick="mostrar('inicio')">🏠 Inicio</button>
     <button class="menu-btn" onclick="mostrar('clientes')">👥 Usuarios</button>
     <button class="menu-btn" onclick="mostrar('facturacion')">🧾 Facturación</button>
