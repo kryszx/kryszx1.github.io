@@ -3,7 +3,7 @@
 <head>
   <base target="_top">
   <meta charset="UTF-8">
-  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/kryszx/kryszx1.github.io/refs/heads/main/Logo2.png">
+  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/kryszx/kryszx1.github.io/refs/heads/main/Logo%20Acuavida.png">
   <title>PANEL ACUAVIDA</title>
 
   <style>
@@ -1109,7 +1109,7 @@ function limpiarNombreArchivo(texto){
     .replace(/^_+|_+$/g,"");
 }
 
-const API_URL = "https://script.google.com/macros/s/AKfycbzrdhXod5Xzeo5HP24IyzdAKsT0CGj9FrNmtaz44y_v4i2FHGUzVzbLh4mnElU68DyA/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxHwOwqmuwUjjsKbg4ItQEdrP4CLh8dsEOTJRDOoVSZ5M4lWNmmDZbPyE9rFf4gub5X/exec";
 
 async function apiRequest(action, data = {}) {
   if (!API_URL || API_URL.includes("PEGA_AQUI")) {
@@ -1634,42 +1634,113 @@ function registrarPagoUI(){
     .catch(errorUI);
 }
 
-/* HISTORIAL */
+/* HISTORIAL Y REIMPRESIÓN */
 function cargarHistorial(){
   const suscriptor = document.getElementById("buscarHistorial").value.trim();
+
+  if(!suscriptor){
+    mensaje("Ingresa un número de suscriptor.");
+    return;
+  }
 
   apiRequest("obtenerHistorial", { suscriptor })
     .then(lista=>{
       const box = document.getElementById("tablaHistorial");
       if(!lista || !lista.length){
-        box.innerHTML = "<p>No hay facturas registradas.</p>";
+        box.innerHTML = "<p>No hay facturas registradas para este suscriptor.</p>";
         return;
       }
 
       let html = `
         <table class="invoice-table">
-          <tr>
-            <th>Factura</th>
-            <th>Fecha</th>
-            <th>Meses</th>
-            <th>Total</th>
-            <th>Estado</th>
-          </tr>
+          <thead>
+            <tr>
+              <th>Factura</th>
+              <th>Fecha</th>
+              <th>Meses</th>
+              <th>Total</th>
+              <th>Estado</th>
+              <th style="text-align:center;">Acción</th>
+            </tr>
+          </thead>
+          <tbody>
       `;
 
       lista.forEach(x=>{
         html += `
           <tr>
-            <td>${escapeHtml(x.factura)}</td>
+            <td style="text-align:center;"><strong>${escapeHtml(x.factura)}</strong></td>
             <td>${escapeHtml(x.fecha)}</td>
             <td>${escapeHtml(x.meses)}</td>
             <td>${moneda(x.total)}</td>
-            <td>${escapeHtml(x.estado)}</td>
+            <td><span class="badge" style="background:${x.estado === 'PAGADA' ? '#dff7e9' : '#fde8e8'}; color:${x.estado === 'PAGADA' ? '#08783e' : '#c5221f'}">${escapeHtml(x.estado)}</span></td>
+            <td style="text-align:center; width: 130px;">
+              <button class="btn-primary" style="padding: 5px 10px; font-size: 12px;" onclick="reimprimirFacturaUI('${escapeHtml(x.factura)}')">
+                🖨️ Imprimir
+              </button>
+            </td>
           </tr>
         `;
       });
 
-      box.innerHTML = html + "</table>";
+      box.innerHTML = html + "</tbody></table>";
+    })
+    .catch(errorUI);
+}
+
+function reimprimirFacturaUI(numeroFactura) {
+  mensaje("Cargando factura #" + numeroFactura + "...");
+  
+  apiRequest("obtenerDetalleFactura", { numeroFactura })
+    .then(f => {
+      // Definir cliente temporalmente para nombre de descarga
+      clienteActual = {
+        suscriptor: f.suscriptor,
+        nombre: f.nombre
+      };
+
+      // Rellenar datos en la plantilla de factura
+      document.getElementById("pNumero").innerText = f.numero || "---";
+      document.getElementById("pActual").innerText = f.numero || "---";
+      document.getElementById("pAnterior").innerText = f.facturaAnterior || "";
+      document.getElementById("pNombre").innerText = f.nombre || "";
+      document.getElementById("pSuscriptor").innerText = f.suscriptor || "";
+      
+      document.getElementById("pCuota").innerText = moneda(f.cuota);
+      document.getElementById("pCuotaTabla").innerText = moneda(f.cuota);
+      
+      const cantidadMeses = f.meses.length;
+      const valorMeses = f.cuota * cantidadMeses;
+      document.getElementById("pCuotasMeses").innerText = moneda(valorMeses);
+
+      document.getElementById("pMora").innerText = moneda(f.mora);
+      document.getElementById("pMoraTabla").innerText = moneda(f.mora);
+      document.getElementById("pMoraMeses").innerText = f.moraMeses || "______________";
+      document.getElementById("pMatricula").innerText = moneda(f.matricula);
+      document.getElementById("pReconexion").innerText = moneda(f.reconexion);
+      document.getElementById("pAbono").innerText = moneda(f.abono);
+      document.getElementById("pOtros").innerText = moneda(f.otros);
+      document.getElementById("pTotal").innerText = moneda(f.total);
+      
+      document.getElementById("pFecha").innerText = f.fecha;
+      document.getElementById("pDesde").innerText = f.periodoDesde || "";
+      document.getElementById("pHasta").innerText = f.periodoHasta || "";
+      document.getElementById("pPagarAntes").innerText = f.pagarAntes || "";
+      document.getElementById("pSuspension").innerText = f.fechaSuspension || "";
+      document.getElementById("pAno").innerText = f.anos || "----";
+
+      // Renderizar meses
+      const boxMeses = document.getElementById("pMeses");
+      boxMeses.innerHTML = "";
+      f.meses.forEach(m => {
+        const d = document.createElement("div");
+        d.className = "invoice-month selected";
+        d.innerText = "☑ " + m;
+        boxMeses.appendChild(d);
+      });
+
+      // Abrir cuadro de impresión/PDF
+      abrirVentanaImpresion(f.numero);
     })
     .catch(errorUI);
 }
