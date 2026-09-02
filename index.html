@@ -2,10 +2,10 @@
 <html lang="es">
 
 <head>
-  <base target="_top">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kryszx Tecnologia - POS</title>
+  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/kryszx/kryszx1.github.io/refs/heads/main/Logo1.png">
+  <title>Kryszx Tecnologia</title>
 
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -19,6 +19,7 @@
     }
     .login-card { width: 100%; max-width: 420px; background: white; border-radius: 18px; padding: 35px; box-shadow: 0 20px 50px rgba(0,0,0,.25); }
     .logo { text-align: center; margin-bottom: 30px; }
+    .logo-icon { width: 70px; height: 70px; margin: auto; border-radius: 18px; display: flex; align-items: center; justify-content: center; background: #111827; color: white; font-size: 30px; font-weight: bold; }
     .logo h1 { margin-top: 15px; font-size: 24px; }
     .logo p { color: #777; margin-top: 5px; }
 
@@ -42,7 +43,8 @@
     .layout { display: flex; min-height: 100vh; }
     .sidebar { width: 240px; background: #111827; color: white; padding: 20px 15px; flex-shrink: 0; }
     .sidebar-logo { text-align: center; padding: 15px 5px 25px; border-bottom: 1px solid #374151; margin-bottom: 20px; }
-    .sidebar-logo h2 { font-size: 15px; margin: 0; color: #fff; }
+    .sidebar-logo h2 { font-size: 19px; }
+    .sidebar-logo small { color: #9ca3af; }
 
     .menu { display: flex; flex-direction: column; gap: 7px; }
     .menu button { width: 100%; text-align: left; border: none; background: transparent; color: #d1d5db; padding: 13px; border-radius: 8px; font-size: 14px; }
@@ -62,6 +64,7 @@
     .card { background: white; border-radius: 12px; padding: 20px; border: 1px solid #e5e7eb; }
     .card-title { color: #6b7280; font-size: 14px; margin-bottom: 10px; }
     .card-value { font-size: 28px; font-weight: bold; }
+
     .card-alert { background-color: #fef2f2 !important; border: 1px solid #fca5a5 !important; }
     .card-alert .card-value { color: #dc2626 !important; }
     .row-stock-alert { background-color: #fef2f2 !important; color: #991b1b !important; font-weight: bold; }
@@ -102,6 +105,7 @@
     .change-display { background: #ecfdf5; border: 1px solid #bbf7d0; border-radius: 9px; padding: 13px; margin-top: 10px; }
     .change-display.insufficient { background: #fef2f2; border-color: #fecaca; color: #b91c1c; }
     .change-label { font-size: 13px; color: #555; margin-bottom: 4px; }
+    .change-display.insufficient .change-label { color: #b91c1c; }
     .change-value { font-size: 23px; font-weight: bold; }
 
     .modal { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, .55); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
@@ -114,7 +118,7 @@
     #toast.show { display: block; }
 
     @media (max-width: 900px) { .sidebar { width: 200px; } .sale-grid { grid-template-columns: 1fr; } }
-    @media (max-width: 700px) { .layout { flex-direction: column; } .sidebar { width: 100%; } .menu { display: grid; grid-template-columns: repeat(3, 1fr); } .logout { margin-top: 10px; } .content { padding: 15px; } .topbar { padding: 0 15px; } }
+    @media (max-width: 700px) { .layout { flex-direction: column; } .sidebar { width: 100%; } .menu { display: grid; grid-template-columns: repeat(3, 1fr); } .logout { margin-top: 10px; } .content { padding: 15px; } .topbar { padding: 0 15px; } .barcode-box { flex-direction: column; } }
   </style>
 </head>
 
@@ -124,18 +128,21 @@
 <div id="loginView">
   <div class="login-card">
     <div class="logo">
+      <div class="logo-container" style="text-align: center; margin-bottom: 20px;">
+        <img src="https://raw.githubusercontent.com/kryszx/kryszx1.github.io/refs/heads/main/Logo1.png" alt="Logo" style="width: 100px; height: 100px; object-fit: contain;">
+      </div>
       <h1 id="loginTituloNegocio">KRYSZX TECNOLOGIA</h1>
       <p>Sistema de Punto de Venta</p>
     </div>
 
     <div class="form-group">
       <label>👤 Usuario</label>
-      <input type="text" id="loginUsuario" placeholder="Ingrese usuario" autocomplete="username" value="admin">
+      <input type="text" id="loginUsuario" placeholder="Ingrese usuario" autocomplete="username">
     </div>
 
     <div class="form-group">
       <label>🔐 Contraseña</label>
-      <input type="password" id="loginContrasena" placeholder="Ingrese contraseña" autocomplete="current-password" value="1234">
+      <input type="password" id="loginContrasena" placeholder="Ingrese contraseña" autocomplete="current-password">
     </div>
 
     <button class="btn btn-primary btn-full" onclick="iniciarSesion()">INGRESAR AL PANEL</button>
@@ -147,8 +154,9 @@
 <div id="appView">
   <div class="layout">
     <aside class="sidebar">
-      <div class="sidebar-logo">
-       <h2 id="sidebarTituloNegocio">KRYSZX TECNOLOGIA</h2>
+      <div class="sidebar-logo" style="text-align: center; padding: 10px 0;">
+       <img src="https://raw.githubusercontent.com/kryszx/kryszx1.github.io/refs/heads/main/Logo1.png" alt="Logo" style="width: 100px; height: 100px; object-fit: contain; border-radius: 50%; margin-bottom: 5px;">
+       <h2 id="sidebarTituloNegocio" style="font-size: 15px; margin: 0; color: #fff;">KRYSZX TECNOLOGIA</h2>
       </div>
 
       <div class="menu">
@@ -325,7 +333,15 @@
               <table>
                 <thead>
                   <tr>
-                    <th>Venta</th><th>Fecha</th><th>Cliente</th><th>Subtotal</th><th>Descuento</th><th>Total</th><th>Pago</th><th>Estado</th><th>Acción</th>
+                    <th>Venta</th>
+                    <th>Fecha</th>
+                    <th>Cliente</th>
+                    <th>Subtotal</th>
+                    <th>Descuento</th>
+                    <th>Total</th>
+                    <th>Pago</th>
+                    <th>Estado</th>
+                    <th>Acción</th>
                   </tr>
                 </thead>
                 <tbody id="tablaHistorial"></tbody>
@@ -337,13 +353,30 @@
         <!-- CONFIGURACIÓN -->
         <section id="seccion-configuracion" class="section">
           <div class="panel">
-            <div class="panel-header"><h3>⚙️ Configuración del Sistema</h3></div>
+            <div class="panel-header">
+              <h3>⚙️ Configuración del Sistema</h3>
+            </div>
             <form id="formConfig" onsubmit="guardarDatosConfiguracion(event)" style="max-width:500px; display:flex; flex-direction:column; gap:15px;">
-              <div class="form-group"><label>Nombre del Negocio:</label><input type="text" id="cfgNombre" required></div>
-              <div class="form-group"><label>NIT / Cédula:</label><input type="text" id="cfgNit"></div>
-              <div class="form-group"><label>Teléfono:</label><input type="text" id="cfgTelefono"></div>
-              <div class="form-group"><label>Dirección:</label><input type="text" id="cfgDireccion"></div>
-              <div class="form-group"><label>Mensaje al pie del Ticket:</label><input type="text" id="cfgMensaje"></div>
+              <div class="form-group">
+                <label>Nombre del Negocio:</label>
+                <input type="text" id="cfgNombre" required>
+              </div>
+              <div class="form-group">
+                <label>NIT / Cédula:</label>
+                <input type="text" id="cfgNit">
+              </div>
+              <div class="form-group">
+                <label>Teléfono:</label>
+                <input type="text" id="cfgTelefono">
+              </div>
+              <div class="form-group">
+                <label>Dirección:</label>
+                <input type="text" id="cfgDireccion">
+              </div>
+              <div class="form-group">
+                <label>Mensaje al pie del Ticket:</label>
+                <input type="text" id="cfgMensaje">
+              </div>
               <button type="submit" class="btn btn-success">💾 Guardar Configuración</button>
             </form>
           </div>
@@ -389,7 +422,7 @@
   </div>
 </div>
 
-<!-- MODAL CONFIRMACIÓN -->
+<!-- MODAL DE CONFIRMACIÓN PERSONALIZADO -->
 <div id="modalConfirmacion" class="modal">
   <div class="modal-card" style="max-width: 400px; text-align: center; padding: 30px;">
     <div style="font-size: 40px; margin-bottom: 10px;">⚠️</div>
@@ -405,80 +438,60 @@
 <div id="toast"></div>
 
 <script>
-// =========================================================================
-// PUENTE DE INTEGRACIÓN GITHUB PAGES <-> GOOGLE APPS SCRIPT
-// =========================================================================
-const URL_WEB_APP = "https://script.google.com/macros/s/AKfycbwGefg97LTOQjo8uemndVSIo90FaripLDSCbJIgr4rY5VjBxpmyDaMRcgDw-9kUDvw5/exec";
 
-class GASRequest {
-  constructor() {
-    this.successFn = null;
-    this.failureFn = null;
-  }
-  withSuccessHandler(fn) { this.successFn = fn; return this; }
-  withFailureHandler(fn) { this.failureFn = fn; return this; }
-  
-  execute(methodProp, args) {
-    let datos = null;
-    switch(methodProp) {
-      case 'login': datos = { usuario: args[0], contrasena: args[1] }; break;
-      case 'buscarProductoPorBarcode': datos = { codigo: args[0] }; break;
-      case 'registrarVenta': datos = args[0]; break;
-      case 'obtenerDetalleVenta': datos = { numeroVenta: args[0] }; break;
-      case 'guardarProducto': datos = args[0]; break;
-      case 'eliminarProducto': datos = { id: args[0] }; break;
-      case 'guardarCliente': datos = args[0]; break;
-      case 'guardarConfiguracion': datos = args[0]; break;
-      default: datos = args[0] || null;
-    }
+  /* =========================================================
+     CONEXIÓN CON GOOGLE APPS SCRIPT
+     REEMPLAZA API_URL por la URL de tu Web App de Apps Script.
+     ========================================================= */
+  const API_URL = 'https://script.google.com/macros/s/AKfycbz0GE62j9FIBOdumWyobsYL0a2Yj9rJ9r_xShBe0wSnHunJZT5mKSb6eknuK2vwz2YP/exec';
 
-    fetch(URL_WEB_APP, {
-      method: 'POST',
-      body: JSON.stringify({ accion: methodProp, datos: datos })
-    })
-    .then(res => res.json())
-    .then(json => {
-      if (this.successFn) this.successFn(json);
-    })
-    .catch(err => {
-      if (this.failureFn) this.failureFn(err);
-      else console.error("Error en petición GAS:", err);
+  function apiCall(action, params = {}) {
+    return new Promise((resolve, reject) => {
+      if (!API_URL || API_URL.includes('PEGA_AQUI')) {
+        reject(new Error('Configura API_URL con la URL de tu Web App de Google Apps Script.'));
+        return;
+      }
+
+      const callbackName = '__apiCallback_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+      const script = document.createElement('script');
+      const query = new URLSearchParams();
+
+      query.set('action', action);
+      query.set('callback', callbackName);
+      query.set('data', JSON.stringify(params));
+      if (usuarioActual && usuarioActual.token) query.set('token', usuarioActual.token);
+
+      const cleanup = () => {
+        delete window[callbackName];
+        if (script.parentNode) script.parentNode.removeChild(script);
+      };
+
+      const timeout = setTimeout(() => {
+        cleanup();
+        reject(new Error('Tiempo de espera agotado. Verifica la URL de Apps Script y el despliegue como Web App.'));
+      }, 30000);
+
+      window[callbackName] = function(response) {
+        clearTimeout(timeout);
+        cleanup();
+        resolve(response);
+      };
+
+      script.onerror = function() {
+        clearTimeout(timeout);
+        cleanup();
+        reject(new Error('No se pudo conectar con Google Apps Script.'));
+      };
+
+      script.src = API_URL + (API_URL.includes('?') ? '&' : '?') + query.toString();
+      document.body.appendChild(script);
     });
   }
-}
 
-const google = {
-  script: {
-    run: new Proxy({}, {
-      get(target, prop) {
-        if (prop === 'withSuccessHandler' || prop === 'withFailureHandler') {
-          const req = new GASRequest();
-          return function(fn) {
-            if (prop === 'withSuccessHandler') req.withSuccessHandler(fn);
-            else req.withFailureHandler(fn);
-            return new Proxy(req, {
-              get(rTarget, rProp) {
-                if (rProp === 'withSuccessHandler' || rProp === 'withFailureHandler') {
-                  return function(fn2) {
-                    if (rProp === 'withSuccessHandler') rTarget.withSuccessHandler(fn2);
-                    else rTarget.withFailureHandler(fn2);
-                    return rTarget;
-                  };
-                }
-                return function(...args) { rTarget.execute(rProp, args); };
-              }
-            });
-          };
-        }
-        return function(...args) {
-          const req = new GASRequest();
-          req.execute(prop, args);
-        };
-      }
-    })
+  function manejarErrorAPI(error, mensaje = 'Error de conexión con el servidor.') {
+    console.error(error);
+    mostrarToast((error && error.message) ? error.message : mensaje);
   }
-};
-// =========================================================================
 
 let usuarioActual = null;
 let carrito = [];
@@ -488,50 +501,63 @@ let historialCache = [];
 let intervalAutoSync = null;
 
 let configSistema = {
-  NOMBRE_NEGOCIO: 'KRYSZX TECNOLOGIA',
-  NIT: '', TELEFONO: '', DIRECCION: '', MENSAJE_TICKET: '¡Gracias por su compra!'
+  NOMBRE_NEGOCIO: 'EL MUNDO DE ARI',
+  NIT: '',
+  TELEFONO: '',
+  DIRECCION: '',
+  MENSAJE_TICKET: '¡Gracias por su compra!'
 };
 
 function escapeHTML(str) {
   if (!str) return '';
-  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }
 
 function formatoCOP(valor) {
-  return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(Number(valor || 0));
+  return new Intl.NumberFormat('es-CO', {
+    style: 'currency', currency: 'COP', maximumFractionDigits: 0
+  }).format(Number(valor || 0));
 }
 
 function mostrarToast(mensaje) {
   const toast = document.getElementById('toast');
   toast.textContent = mensaje;
   toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 3000);
+  setTimeout(function() { toast.classList.remove('show'); }, 3000);
 }
 
 function mostrarConfirmacion(titulo, mensaje, onAceptar) {
   document.getElementById('confirmTitulo').textContent = titulo;
   document.getElementById('confirmMensaje').textContent = mensaje;
   document.getElementById('modalConfirmacion').classList.add('show');
+  
   const btnAceptar = document.getElementById('confirmBtnAceptar');
   const nuevoBtn = btnAceptar.cloneNode(true);
   btnAceptar.parentNode.replaceChild(nuevoBtn, btnAceptar);
-  document.getElementById('confirmBtnAceptar').addEventListener('click', () => {
+  
+  document.getElementById('confirmBtnAceptar').addEventListener('click', function() {
     cerrarModal('modalConfirmacion');
     if (onAceptar) onAceptar();
   });
 }
 
-function cargarConfiguracionSistema() {
-  google.script.run.withSuccessHandler(cfg => {
-    if (cfg && cfg.config) {
-      configSistema = cfg.config;
+async function cargarConfiguracionSistema() {
+  try {
+    const cfg = await apiCall('obtenerConfiguracion');
+    if (cfg && cfg.NOMBRE_NEGOCIO) {
+      configSistema = cfg;
       document.getElementById('loginTituloNegocio').textContent = configSistema.NOMBRE_NEGOCIO;
       document.getElementById('sidebarTituloNegocio').textContent = configSistema.NOMBRE_NEGOCIO;
     }
-  }).obtenerConfiguracion();
+  } catch (error) { manejarErrorAPI(error, 'No se pudo cargar la configuración.'); }
 }
 
-function guardarDatosConfiguracion(e) {
+async function guardarDatosConfiguracion(e) {
   e.preventDefault();
   mostrarToast('Guardando configuración...');
   const nuevaConfig = {
@@ -541,38 +567,33 @@ function guardarDatosConfiguracion(e) {
     DIRECCION: document.getElementById('cfgDireccion').value,
     MENSAJE_TICKET: document.getElementById('cfgMensaje').value
   };
-  google.script.run.withSuccessHandler(res => {
-    if (res.ok) {
-      configSistema = nuevaConfig;
-      document.getElementById('sidebarTituloNegocio').textContent = configSistema.NOMBRE_NEGOCIO;
-      document.getElementById('loginTituloNegocio').textContent = configSistema.NOMBRE_NEGOCIO;
-      mostrarToast('Configuración actualizada.');
-    }
-  }).guardarConfiguracion(nuevaConfig);
+  try {
+    const res = await apiCall('guardarConfiguracion', {config: nuevaConfig});
+    if (!res.ok) { mostrarToast(res.mensaje || 'No se pudo guardar.'); return; }
+    configSistema = nuevaConfig;
+    document.getElementById('sidebarTituloNegocio').textContent = configSistema.NOMBRE_NEGOCIO;
+    document.getElementById('loginTituloNegocio').textContent = configSistema.NOMBRE_NEGOCIO;
+    mostrarToast('Configuración actualizada correctamente.');
+  } catch (error) { manejarErrorAPI(error, 'Error al guardar la configuración.'); }
 }
 
-function iniciarSesion() {
-  const usuario = document.getElementById('loginUsuario').value;
+async function iniciarSesion() {
+  const usuario = document.getElementById('loginUsuario').value.trim();
   const contrasena = document.getElementById('loginContrasena').value;
-  document.getElementById('loginError').textContent = 'Validando...';
-
-  google.script.run
-    .withSuccessHandler(resultado => {
-      if (!resultado.ok) {
-        document.getElementById('loginError').textContent = resultado.mensaje;
-        return;
-      }
-      usuarioActual = resultado.usuario;
-      document.getElementById('loginView').style.display = 'none';
-      document.getElementById('appView').style.display = 'block';
-      document.getElementById('nombreUsuario').textContent = usuarioActual.nombre;
-      cargarSistema();
-      if (!intervalAutoSync) intervalAutoSync = setInterval(cargarSistemaSilencioso, 15000);
-    })
-    .withFailureHandler(error => {
-      document.getElementById('loginError').textContent = error.message || 'Error de conexión.';
-    })
-    .login(usuario, contrasena);
+  const errorEl = document.getElementById('loginError');
+  if (!usuario || !contrasena) { errorEl.textContent = 'Ingrese usuario y contraseña.'; return; }
+  errorEl.textContent = 'Validando...';
+  try {
+    const resultado = await apiCall('login', {usuario, contrasena});
+    if (!resultado.ok) { errorEl.textContent = resultado.mensaje || 'Usuario o contraseña incorrectos.'; return; }
+    usuarioActual = resultado.usuario;
+    usuarioActual.token = resultado.token;
+    document.getElementById('loginView').style.display = 'none';
+    document.getElementById('appView').style.display = 'block';
+    document.getElementById('nombreUsuario').textContent = usuarioActual.nombre;
+    cargarSistema();
+    if (!intervalAutoSync) intervalAutoSync = setInterval(cargarSistemaSilencioso, 10000);
+  } catch (error) { errorEl.textContent = error.message || 'Error de conexión.'; }
 }
 
 function cerrarSesion() {
@@ -580,6 +601,9 @@ function cerrarSesion() {
   usuarioActual = null;
   document.getElementById('appView').style.display = 'none';
   document.getElementById('loginView').style.display = 'flex';
+  document.getElementById('loginUsuario').value = '';
+  document.getElementById('loginContrasena').value = '';
+  document.getElementById('loginError').textContent = '';
 }
 
 function cargarSistema() {
@@ -591,18 +615,22 @@ function cargarSistema() {
   actualizarMetodoPago();
 }
 
-function cargarSistemaSilencioso() {
-  cargarDashboard();
-  cargarHistorial();
-  google.script.run.withSuccessHandler(res => { if(res.productos) productosCache = res.productos; }).obtenerProductos();
+async function cargarSistemaSilencioso() {
+  try {
+    cargarDashboard();
+    cargarHistorial();
+    productosCache = await apiCall('obtenerProductos');
+  } catch (error) { console.warn('Sincronización automática:', error.message); }
 }
 
 function mostrarSeccion(nombre, boton) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.getElementById('seccion-' + nombre).classList.add('active');
-  document.querySelectorAll('.menu button').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(seccion => seccion.classList.remove('active'));
+  const seccion = document.getElementById('seccion-' + nombre);
+  if (seccion) seccion.classList.add('active');
+
+  document.querySelectorAll('.menu button').forEach(btn => btn.classList.remove('active'));
   if (boton) boton.classList.add('active');
-  
+
   const titulos = { inicio: 'Inicio', venta: 'Nueva venta', productos: 'Productos', clientes: 'Clientes', historial: 'Historial de ventas', configuracion: 'Configuración' };
   document.getElementById('tituloSeccion').textContent = titulos[nombre] || nombre;
 
@@ -617,20 +645,18 @@ function mostrarSeccion(nombre, boton) {
   }
 }
 
-function cargarDashboard() {
-  google.script.run.withSuccessHandler(res => {
-    const data = res.dashboard;
-    if (!data) return;
+/* DASHBOARD */
+async function cargarDashboard() {
+  try {
+    const data = await apiCall('obtenerDashboard');
     document.getElementById('dashVentas').textContent = data.ventasHoy;
     document.getElementById('dashTotal').textContent = formatoCOP(data.totalHoy);
     document.getElementById('dashProductos').textContent = data.productos;
     document.getElementById('dashClientes').textContent = data.clientes;
-    document.getElementById('dashStockBajo').textContent = data.stockBajo;
-
     const cardStockBajo = document.getElementById('card-stock-bajo');
+    document.getElementById('dashStockBajo').textContent = data.stockBajo;
     if (data.stockBajo > 0) cardStockBajo.classList.add('card-alert');
     else cardStockBajo.classList.remove('card-alert');
-
     const tbody = document.getElementById('tablaStockBajo');
     tbody.innerHTML = '';
     if (!data.productosStockBajo || !data.productosStockBajo.length) {
@@ -638,41 +664,69 @@ function cargarDashboard() {
       return;
     }
     data.productosStockBajo.forEach(p => {
-      tbody.innerHTML += `<tr class="row-stock-alert"><td>${escapeHTML(p.NOMBRE)}</td><td>${escapeHTML(p.CODIGO_BARRAS)}</td><td><span class="badge-danger">${p.STOCK}</span></td><td>${p.STOCK_MINIMO}</td></tr>`;
+      tbody.innerHTML += `
+        <tr class="row-stock-alert">
+          <td>${escapeHTML(p.NOMBRE)}</td>
+          <td>${escapeHTML(p.CODIGO_BARRAS)}</td>
+          <td><span class="badge-danger">${p.STOCK}</span></td>
+          <td>${p.STOCK_MINIMO}</td>
+        </tr>`;
     });
-  }).obtenerDashboard();
+  } catch (error) { manejarErrorAPI(error, 'No se pudo cargar el dashboard.'); }
 }
 
+/* CODIGO DE BARRAS */
 function barcodeKeyDown(event) {
-  if (event.key === 'Enter') { event.preventDefault(); procesarBarcode(); }
+  if (event.key === 'Enter') {
+    event.preventDefault();
+    procesarBarcode();
+  }
 }
 
-function procesarBarcode() {
+async function procesarBarcode() {
   const input = document.getElementById('barcodeInput');
   const codigo = input.value.trim();
   if (!codigo) return;
-  google.script.run.withSuccessHandler(res => {
+  try {
+    const res = await apiCall('buscarProductoPorBarcode', {codigo});
     if (!res.ok) { mostrarToast(res.mensaje); input.select(); return; }
     agregarAlCarrito(res.producto);
     input.value = '';
     input.focus();
-  }).buscarProductoPorBarcode(codigo);
+  } catch (error) { manejarErrorAPI(error, 'No se pudo consultar el código de barras.'); }
 }
 
-function cargarProductos() {
-  google.script.run.withSuccessHandler(res => {
-    productosCache = res.productos || [];
+/* PRODUCTOS */
+async function cargarProductos() {
+  try {
+    const productos = await apiCall('obtenerProductos');
+    productosCache = productos || [];
     renderTablaProductos();
-  }).obtenerProductos();
+  } catch (error) { manejarErrorAPI(error, 'No se pudieron cargar los productos.'); }
 }
 
 function renderTablaProductos(lista) {
   lista = lista || productosCache;
   const tbody = document.getElementById('tablaProductos');
   tbody.innerHTML = '';
-  if (!lista.length) { tbody.innerHTML = '<tr><td colspan="7">No se encontraron productos.</td></tr>'; return; }
+  if (!lista.length) {
+    tbody.innerHTML = '<tr><td colspan="7">No se encontraron productos.</td></tr>';
+    return;
+  }
   lista.forEach(p => {
-    tbody.innerHTML += `<tr><td>${p.ID}</td><td>${escapeHTML(p.CODIGO_BARRAS)}</td><td>${escapeHTML(p.NOMBRE)}</td><td>${escapeHTML(p.CATEGORIA)}</td><td>${formatoCOP(p.PRECIO_VENTA)}</td><td>${p.STOCK}</td><td style="display:flex; gap:5px;"><button class="btn btn-warning" style="padding:5px 10px; font-size:12px;" onclick='abrirModalEditarProducto(${JSON.stringify(p)})'>Editar</button><button class="btn btn-danger" style="padding:5px 10px; font-size:12px;" onclick="eliminarProducto(${p.ID})">Eliminar</button></td></tr>`;
+    tbody.innerHTML += `
+      <tr>
+        <td>${p.ID}</td>
+        <td>${escapeHTML(p.CODIGO_BARRAS)}</td>
+        <td>${escapeHTML(p.NOMBRE)}</td>
+        <td>${escapeHTML(p.CATEGORIA)}</td>
+        <td>${formatoCOP(p.PRECIO_VENTA)}</td>
+        <td>${p.STOCK}</td>
+        <td style="display: flex; gap: 5px;">
+          <button class="btn btn-warning" style="padding: 5px 10px; font-size:12px;" onclick='abrirModalEditarProducto(${JSON.stringify(p)})'>Editar</button>
+          <button class="btn btn-danger" style="padding: 5px 10px; font-size:12px;" onclick="eliminarProducto(${p.ID})">Eliminar</button>
+        </td>
+      </tr>`;
   });
 }
 
@@ -702,7 +756,7 @@ function abrirModalEditarProducto(p) {
   document.getElementById('modalProducto').classList.add('show');
 }
 
-function guardarProductoUI() {
+async function guardarProductoUI() {
   const idEdit = document.getElementById('productoIdEdit').value;
   const datos = {
     id: idEdit ? Number(idEdit) : null,
@@ -714,23 +768,25 @@ function guardarProductoUI() {
     stock: document.getElementById('productoStock').value,
     stockMinimo: document.getElementById('productoStockMinimo').value
   };
-  google.script.run.withSuccessHandler(res => {
+  try {
+    const res = await apiCall('guardarProducto', {datos});
     if (!res.ok) { mostrarToast(res.mensaje); return; }
-    mostrarToast('Producto guardado correctamente.');
+    mostrarToast(idEdit ? 'Producto actualizado correctamente.' : 'Producto guardado correctamente.');
     cerrarModal('modalProducto');
     cargarProductos();
     cargarDashboard();
-  }).guardarProducto(datos);
+  } catch (error) { manejarErrorAPI(error, 'Error al guardar producto.'); }
 }
 
-function eliminarProducto(id) {
-  mostrarConfirmacion('Eliminar producto', '¿Estás seguro de eliminar este producto?', () => {
-    google.script.run.withSuccessHandler(res => {
-      if (!res.ok) { mostrarToast(res.mensaje); return; }
-      mostrarToast('Producto eliminado.');
+async function eliminarProducto(id) {
+  mostrarConfirmacion('Eliminar producto', '¿Estás seguro de que deseas eliminar este producto?', async function() {
+    try {
+      const res = await apiCall('eliminarProducto', {id});
+      if (!res.ok) { mostrarToast(res.mensaje || 'Error al eliminar producto.'); return; }
+      mostrarToast('Producto eliminado correctamente.');
       cargarProductos();
       cargarDashboard();
-    }).eliminarProducto(id);
+    } catch (error) { manejarErrorAPI(error, 'Error al eliminar producto.'); }
   });
 }
 
@@ -751,10 +807,15 @@ function renderResultadosProductos(lista) {
   const contenedor = document.getElementById('resultadosProductos');
   contenedor.innerHTML = '';
   lista.forEach(p => {
-    contenedor.innerHTML += `<div class="product-result"><div class="product-result-info"><strong>${escapeHTML(p.NOMBRE)}</strong><small>${escapeHTML(p.CODIGO_BARRAS)} · Stock: ${p.STOCK}</small></div><div><strong>${formatoCOP(p.PRECIO_VENTA)}</strong><button class="btn btn-primary" style="margin-left:8px;" onclick='agregarAlCarrito(${JSON.stringify(p)})'>Agregar</button></div></div>`;
+    contenedor.innerHTML += `
+      <div class="product-result">
+        <div class="product-result-info"><strong>${escapeHTML(p.NOMBRE)}</strong><small>${escapeHTML(p.CODIGO_BARRAS)} · Stock: ${p.STOCK}</small></div>
+        <div><strong>${formatoCOP(p.PRECIO_VENTA)}</strong><button class="btn btn-primary" style="margin-left:8px;" onclick='agregarAlCarrito(${JSON.stringify(p)})'>Agregar</button></div>
+      </div>`;
   });
 }
 
+/* CARRITO */
 function agregarAlCarrito(producto) {
   const ex = carrito.find(item => String(item.productoId) === String(producto.ID));
   if (ex) {
@@ -785,7 +846,12 @@ function renderCarrito() {
   contenedor.innerHTML = '';
   if (!carrito.length) { contenedor.innerHTML = '<p style="color:#777; text-align:center;">El carrito está vacío.</p>'; return; }
   carrito.forEach((item, index) => {
-    contenedor.innerHTML += `<div class="cart-item"><div class="cart-item-info"><strong>${escapeHTML(item.nombre)}</strong><small>${formatoCOP(item.precio)}</small></div><div class="qty-control"><button onclick="cambiarCantidad(${index}, -1)">-</button><strong>${item.cantidad}</strong><button onclick="cambiarCantidad(${index}, 1)">+</button></div><div><strong>${formatoCOP(item.precio * item.cantidad)}</strong><button class="remove-item" onclick="eliminarDelCarrito(${index})">×</button></div></div>`;
+    contenedor.innerHTML += `
+      <div class="cart-item">
+        <div class="cart-item-info"><strong>${escapeHTML(item.nombre)}</strong><small>${formatoCOP(item.precio)}</small></div>
+        <div class="qty-control"><button onclick="cambiarCantidad(${index}, -1)">-</button><strong>${item.cantidad}</strong><button onclick="cambiarCantidad(${index}, 1)">+</button></div>
+        <div><strong>${formatoCOP(item.precio * item.cantidad)}</strong><button class="remove-item" onclick="eliminarDelCarrito(${index})">×</button></div>
+      </div>`;
   });
 }
 
@@ -813,23 +879,36 @@ function calcularCambio() {
   else { v.textContent = formatoCOP(r - t); d.classList.remove('insufficient'); }
 }
 
-function finalizarVenta() {
+/* FINALIZAR VENTA CON IMPRESIÓN */
+async function finalizarVenta() {
   if (!carrito.length) { mostrarToast('Agrega productos al carrito.'); return; }
-  const total = obtenerTotal(), metodo = document.getElementById('ventaMetodoPago').value;
-  let recibido = 0;
+  const total = obtenerTotal();
+  const metodo = document.getElementById('ventaMetodoPago').value;
+  let recibido = 0, cambio = 0;
   if (metodo === 'Efectivo') {
     recibido = Number(document.getElementById('valorRecibido').value || 0);
     if (recibido < total) { mostrarToast('El monto recibido es insuficiente.'); return; }
+    cambio = recibido - total;
   } else { recibido = total; }
-
   const selC = document.getElementById('ventaCliente');
   const clienteId = selC.value;
-  const clienteNombre = selC.options[selC.selectedIndex].text;
-  const nombreCajero = usuarioActual ? usuarioActual.nombre : 'Cajero';
-
-  google.script.run.withSuccessHandler(res => {
-    if (!res.ok) { mostrarToast('Error al registrar venta.'); return; }
-    mostrarToast('Venta exitosa.');
+  const clienteNombre = selC.options[selC.selectedIndex] ? selC.options[selC.selectedIndex].text : 'Consumidor Final';
+  const nombreCajero = usuarioActual ? (usuarioActual.nombre || usuarioActual.usuario) : 'Cajero';
+  try {
+    const res = await apiCall('registrarVenta', {datos: {
+      carrito: carrito,
+      descuento: obtenerDescuento(),
+      clienteId: clienteId,
+      clienteNombre: clienteNombre,
+      metodoPago: metodo,
+      valorRecibido: recibido,
+      usuario: nombreCajero
+    }});
+    if (!res.ok) { mostrarToast(res.mensaje || 'Error al guardar.'); return; }
+    mostrarToast('Venta registrada exitosamente.');
+    res.venta.encabezado.VALOR_RECIBIDO = recibido;
+    res.venta.encabezado.CAMBIO = cambio;
+    res.venta.encabezado.USUARIO = nombreCajero;
     imprimirTicket(res.venta);
     carrito = [];
     document.getElementById('ventaDescuento').value = 0;
@@ -837,95 +916,226 @@ function finalizarVenta() {
     renderCarrito();
     actualizarResumen();
     cargarSistema();
-  }).registrarVenta({
-    carrito: carrito,
-    descuento: obtenerDescuento(),
-    clienteId: clienteId,
-    clienteNombre: clienteNombre,
-    metodoPago: metodo,
-    valorRecibido: recibido,
-    usuario: nombreCajero
-  });
+  } catch (error) { manejarErrorAPI(error, 'Error al registrar la venta.'); }
 }
 
-function reimprimirVenta(numeroVenta) {
-  google.script.run.withSuccessHandler(res => {
-    if (!res.ok) { mostrarToast('Error al buscar ticket.'); return; }
+/* REIMPRESIÓN DESDE EL HISTORIAL */
+async function reimprimirVenta(numeroVenta) {
+  mostrarToast('Cargando ticket ' + numeroVenta + '...');
+  try {
+    const res = await apiCall('obtenerDetalleVenta', {numeroVenta});
+    if (!res.ok) { mostrarToast('Error: ' + res.mensaje); return; }
     imprimirTicket(res.venta);
-  }).obtenerDetalleVenta(numeroVenta);
+  } catch (error) { manejarErrorAPI(error, 'Error al obtener los datos de la venta.'); }
 }
 
+/* IMPRESIÓN DIRECTA DE TICKETS */
 function imprimirTicket(venta) {
   const enc = venta.encabezado;
-  const det = venta.detalles || [];
+  const det = venta.detalles || venta.detalle || [];
+  const nombreAtendido = enc.USUARIO || (usuarioActual ? (usuarioActual.nombre || usuarioActual.usuario) : 'Cajero');
+
   let tablaFilas = '';
   det.forEach(item => {
-    tablaFilas += `<tr><td style="padding:2px 0;">${item.CANTIDAD}</td><td style="padding:2px 0;">${escapeHTML(item.PRODUCTO_NOMBRE)}</td><td style="text-align:right; padding:2px 0;">${formatoCOP(item.TOTAL)}</td></tr>`;
+    tablaFilas += `
+      <tr>
+        <td style="padding:2px 0;">${item.CANTIDAD}</td>
+        <td style="padding:2px 0;">${escapeHTML(item.PRODUCTO_NOMBRE)}</td>
+        <td style="text-align:right; padding:2px 0;">${formatoCOP(item.TOTAL)}</td>
+      </tr>`;
   });
 
-  const win = window.open('', '_print', 'width=300,height=600');
-  win.document.write(`
-    <html><head><style>body { font-family: monospace; font-size: 12px; width: 260px; margin: 0 auto; padding: 10px; }</style></head>
+  let detallesPagoHtml = `
+    <div style="display:flex; justify-content:space-between; margin-top:4px;">
+      <span>Método de Pago:</span> <strong>${escapeHTML(enc.METODO_PAGO || 'Efectivo')}</strong>
+    </div>
+  `;
+
+  const metodoLower = String(enc.METODO_PAGO || 'efectivo').toLowerCase();
+  if (metodoLower === 'efectivo') {
+    const valorRecibido = enc.VALOR_RECIBIDO !== undefined ? enc.VALOR_RECIBIDO : enc.TOTAL;
+    const cambioCalculado = enc.CAMBIO !== undefined ? enc.CAMBIO : (valorRecibido - enc.TOTAL);
+
+    detallesPagoHtml += `
+      <div style="display:flex; justify-content:space-between; margin-top:2px;">
+        <span>Paga con:</span> <span>${formatoCOP(valorRecibido)}</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; margin-top:2px;">
+        <span>Cambio:</span> <span>${formatoCOP(cambioCalculado)}</span>
+      </div>
+    `;
+  }
+
+  const contenidoTicket = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Ticket ${enc.NUMERO_VENTA}</title>
+      <style>
+        @page { size: auto; margin: 0; }
+        body { font-family: monospace; font-size: 12px; width: 280px; margin: 0 auto; padding: 15px 10px; color: #000; }
+        .center { text-align: center; }
+        .line { border-bottom: 1px dashed #000; margin: 8px 0; }
+        table { width: 100%; border-collapse: collapse; margin: 8px 0; }
+        th { border-bottom: 1px solid #000; text-align: left; padding-bottom: 3px; font-size: 11px; }
+      </style>
+    </head>
     <body>
-      <div style="text-align:center;"><strong>${escapeHTML(configSistema.NOMBRE_NEGOCIO)}</strong><br>Ticket: ${enc.NUMERO_VENTA}<br>${enc.FECHA}</div>
-      <hr>
-      <div>Cliente: ${escapeHTML(enc.CLIENTE_NOMBRE)}</div>
-      <hr>
-      <table><tr><th>Cant</th><th>Prod</th><th style="text-align:right;">Total</th></tr>${tablaFilas}</table>
-      <hr>
-      <div>TOTAL: <strong>${formatoCOP(enc.TOTAL)}</strong></div>
-      <div style="text-align:center; margin-top:10px;">${escapeHTML(configSistema.MENSAJE_TICKET)}</div>
-    </body></html>
-  `);
-  win.document.close();
-  setTimeout(() => { win.focus(); win.print(); win.close(); }, 300);
+      <div class="center">
+        <strong style="font-size:14px;">${escapeHTML(configSistema.NOMBRE_NEGOCIO)}</strong><br>
+        ${configSistema.NIT ? 'NIT: ' + escapeHTML(configSistema.NIT) + '<br>' : ''}
+        ${configSistema.DIRECCION ? escapeHTML(configSistema.DIRECCION) + '<br>' : ''}
+        ${configSistema.TELEFONO ? 'Tel: ' + escapeHTML(configSistema.TELEFONO) + '<br>' : ''}
+        Ticket: ${enc.NUMERO_VENTA}<br>
+        Fecha: ${enc.FECHA}
+      </div>
+      <div class="line"></div>
+      <div><strong>Cliente:</strong> ${escapeHTML(enc.CLIENTE_NOMBRE)}</div>
+      <div><strong>Atendido por:</strong> ${escapeHTML(nombreAtendido)}</div>
+      <div class="line"></div>
+      <table>
+        <thead>
+          <tr><th>Cant</th><th>Producto</th><th style="text-align:right;">Total</th></tr>
+        </thead>
+        <tbody>
+          ${tablaFilas}
+        </tbody>
+      </table>
+      <div class="line"></div>
+      <div style="display:flex; justify-content:space-between;"><span>Subtotal:</span> <span>${formatoCOP(enc.SUBTOTAL)}</span></div>
+      <div style="display:flex; justify-content:space-between;"><span>Descuento:</span> <span>${formatoCOP(enc.DESCUENTO)}</span></div>
+      <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:13px; margin-top:4px;">
+        <span>TOTAL:</span> <span>${formatoCOP(enc.TOTAL)}</span>
+      </div>
+      <div class="line"></div>
+      ${detallesPagoHtml}
+      <div class="line"></div>
+      <div class="center" style="margin-top:10px;">${escapeHTML(configSistema.MENSAJE_TICKET || '¡Gracias por su compra!')}</div>
+    </body>
+    </html>
+  `;
+
+  let iframe = document.getElementById('printFrame');
+  if (!iframe) {
+    iframe = document.createElement('iframe');
+    iframe.id = 'printFrame';
+    iframe.style.position = 'fixed';
+    iframe.style.right = '0';
+    iframe.style.bottom = '0';
+    iframe.style.width = '0';
+    iframe.style.height = '0';
+    iframe.style.border = '0';
+    document.body.appendChild(iframe);
+  }
+
+  const doc = iframe.contentWindow.document;
+  doc.open();
+  doc.write(contenidoTicket);
+  doc.close();
+
+  setTimeout(() => {
+    iframe.contentWindow.focus();
+    iframe.contentWindow.print();
+  }, 300);
 }
 
-function cargarHistorial() {
-  google.script.run.withSuccessHandler(res => {
-    historialCache = res.ventas || [];
-    const tbody = document.getElementById('tablaHistorial');
-    tbody.innerHTML = '';
-    if (!historialCache.length) { tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;">No hay ventas registradas.</td></tr>'; return; }
-    historialCache.forEach(v => {
-      tbody.innerHTML += `<tr><td><strong>${escapeHTML(v.NUMERO_VENTA)}</strong></td><td>${escapeHTML(v.FECHA)}</td><td>${escapeHTML(v.CLIENTE_NOMBRE)}</td><td>${formatoCOP(v.SUBTOTAL)}</td><td>${formatoCOP(v.DESCUENTO)}</td><td><strong>${formatoCOP(v.TOTAL)}</strong></td><td>${escapeHTML(v.METODO_PAGO)}</td><td><span style="color:green; font-weight:bold;">${escapeHTML(v.ESTADO)}</span></td><td><button class="btn btn-primary" style="padding:5px 10px; font-size:12px;" onclick="reimprimirVenta('${escapeHTML(v.NUMERO_VENTA)}')">🖨️ Ticket</button></td></tr>`;
+/* DESCARGA DE EXCEL / CSV */
+async function descargarReporteExcel() {
+  mostrarToast('Generando reporte...');
+  try {
+    const res = await apiCall('obtenerReporteExcel');
+    if (!res.ok) { mostrarToast('Error: ' + res.mensaje); return; }
+    let csvContent = "";
+    res.datos.forEach(row => {
+      const fila = row.map(campo => `"${String(campo).replace(/"/g, '""')}"`).join(",");
+      csvContent += fila + "\r\n";
     });
-  }).obtenerHistorialVentas();
-}
-
-function descargarReporteExcel() {
-  google.script.run.withSuccessHandler(res => {
-    if (!res.ok) return;
-    let csv = "";
-    res.datos.forEach(row => { csv += row.map(c => `"${String(c).replace(/"/g, '""')}"`).join(",") + "\r\n"; });
-    const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
+    const blob = new Blob(["\uFEFF" + csvContent], {type: 'text/csv;charset=utf-8;'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
     a.download = `Reporte_Ventas_${new Date().toISOString().slice(0,10)}.csv`;
+    document.body.appendChild(a);
     a.click();
+    document.body.removeChild(a);
     URL.revokeObjectURL(url);
-  }).obtenerReporteExcel();
+    mostrarToast('Descarga completada.');
+  } catch (error) { manejarErrorAPI(error, 'Error al generar el reporte.'); }
 }
 
-function cargarClientes() {
-  google.script.run.withSuccessHandler(res => {
-    clientesCache = res.clientes || [];
-    const tbody = document.getElementById('tablaClientes');
-    tbody.innerHTML = '';
+/* HISTORIAL */
+async function cargarHistorial() {
+  try {
+    const ventas = await apiCall('obtenerHistorialVentas');
+    historialCache = ventas || [];
+    renderHistorial();
+  } catch (error) { manejarErrorAPI(error, 'Error obteniendo ventas.'); }
+}
+
+function renderHistorial() {
+  const tbody = document.getElementById('tablaHistorial');
+  tbody.innerHTML = '';
+
+  if (!historialCache || !historialCache.length) {
+    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;">No hay ventas en la base de datos.</td></tr>';
+    return;
+  }
+
+  historialCache.forEach(v => {
+    tbody.innerHTML += `
+      <tr>
+        <td><strong>${escapeHTML(v.NUMERO_VENTA)}</strong></td>
+        <td>${escapeHTML(v.FECHA)}</td>
+        <td>${escapeHTML(v.CLIENTE_NOMBRE)}</td>
+        <td>${formatoCOP(v.SUBTOTAL)}</td>
+        <td>${formatoCOP(v.DESCUENTO)}</td>
+        <td><strong>${formatoCOP(v.TOTAL)}</strong></td>
+        <td>${escapeHTML(v.METODO_PAGO)}</td>
+        <td><span style="color:green; font-weight:bold;">${escapeHTML(v.ESTADO)}</span></td>
+        <td>
+          <button class="btn btn-primary" style="padding: 5px 10px; font-size:12px;" onclick="reimprimirVenta('${escapeHTML(v.NUMERO_VENTA)}')">
+            🖨️ Ticket
+          </button>
+        </td>
+      </tr>`;
+  });
+}
+
+/* CLIENTES */
+async function cargarClientes() {
+  try {
+    const clientes = await apiCall('obtenerClientes');
+    clientesCache = clientes || [];
+    renderTablaClientes();
     const sel = document.getElementById('ventaCliente');
     sel.innerHTML = '';
     clientesCache.forEach(c => {
-      tbody.innerHTML += `<tr><td>${c.ID}</td><td>${escapeHTML(c.DOCUMENTO)}</td><td>${escapeHTML(c.NOMBRE)}</td><td>${escapeHTML(c.TELEFONO)}</td><td>${escapeHTML(c.CORREO)}</td></tr>`;
       sel.innerHTML += `<option value="${c.ID}">${escapeHTML(c.NOMBRE)}</option>`;
     });
-  }).obtenerClientes();
+  } catch (error) { manejarErrorAPI(error, 'No se pudieron cargar los clientes.'); }
 }
 
+function renderTablaClientes(lista) {
+  lista = lista || clientesCache;
+  const tbody = document.getElementById('tablaClientes');
+  tbody.innerHTML = '';
+  if (!lista.length) { tbody.innerHTML = '<tr><td colspan="5">No hay clientes.</td></tr>'; return; }
+  lista.forEach(c => {
+    tbody.innerHTML += `<tr><td>${c.ID}</td><td>${escapeHTML(c.DOCUMENTO)}</td><td>${escapeHTML(c.NOMBRE)}</td><td>${escapeHTML(c.TELEFONO)}</td><td>${escapeHTML(c.CORREO)}</td></tr>`;
+  });
+}
+
+function filtrarTablaClientes() {
+  const t = document.getElementById('buscarClienteTabla').value.toLowerCase().trim();
+  const l = clientesCache.filter(c => String(c.NOMBRE).toLowerCase().includes(t) || String(c.DOCUMENTO).toLowerCase().includes(t));
+  renderTablaClientes(l);
+}
+
+/* MODALES */
 function abrirModalCliente() { document.getElementById('modalCliente').classList.add('show'); }
 function cerrarModal(id) { document.getElementById(id).classList.remove('show'); }
 
-function guardarClienteUI() {
+async function guardarClienteUI() {
   const datos = {
     documento: document.getElementById('clienteDocumento').value,
     nombre: document.getElementById('clienteNombre').value,
@@ -933,14 +1143,20 @@ function guardarClienteUI() {
     direccion: document.getElementById('clienteDireccion').value,
     correo: document.getElementById('clienteCorreo').value
   };
-  google.script.run.withSuccessHandler(res => {
+  try {
+    const res = await apiCall('guardarCliente', {datos});
     if (!res.ok) { mostrarToast(res.mensaje); return; }
     mostrarToast('Cliente guardado.');
     cerrarModal('modalCliente');
+    ['clienteDocumento','clienteNombre','clienteTelefono','clienteDireccion','clienteCorreo'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
     cargarClientes();
-  }).guardarCliente(datos);
+    cargarDashboard();
+  } catch (error) { manejarErrorAPI(error, 'Error al guardar cliente.'); }
 }
 
+// Inicializar configuración al cargar la página en el navegador
 cargarConfiguracionSistema();
 </script>
 
