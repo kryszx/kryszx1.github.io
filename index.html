@@ -2,10 +2,74 @@
 <html lang="es">
 
 <head>
+  <base target="_top">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/kryszx/kryszx1.github.io/refs/heads/main/Logo1.png">
   <title>Kryszx Tecnologia</title>
+
+  <!-- PUENTE DE CONEXIÓN ENTRE GITHUB Y GOOGLE APPS SCRIPT -->
+  <script>
+    const URL_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbxEUAYg2NwEUIMzAGKTkbwOb-0OmpUoyrGrm-PFyVpNeQzuf9ETfWAGzTLSqF0IRpQ6/exec";
+
+    const google = {
+      script: {
+        run: {
+          withSuccessHandler: function(callbackSuccess) {
+            this.successHandler = callbackSuccess;
+            return this;
+          },
+          withFailureHandler: function(callbackFailure) {
+            this.failureHandler = callbackFailure;
+            return this;
+          }
+        }
+      }
+    };
+
+    const handler = {
+      get: function(target, prop) {
+        if (prop === 'withSuccessHandler' || prop === 'withFailureHandler') {
+          return target[prop].bind(target);
+        }
+        return function(...args) {
+          let datosEnvio = null;
+          if (prop === 'login') datosEnvio = { usuario: args[0], contrasena: args[1] };
+          else if (prop === 'buscarProductoPorBarcode') datosEnvio = { codigo: args[0] };
+          else if (prop === 'eliminarProducto') datosEnvio = { id: args[0] };
+          else if (prop === 'obtenerDetalleVenta') datosEnvio = { numeroVenta: args[0] };
+          else if (args.length > 0) datosEnvio = args[0];
+
+          fetch(URL_APPS_SCRIPT, {
+            method: 'POST',
+            body: JSON.stringify({ accion: prop, datos: datosEnvio })
+          })
+          .then(response => response.json())
+          .then(res => {
+            let resultadoFinal = res;
+            if (prop === 'login') resultadoFinal = res;
+            else if (prop === 'obtenerConfiguracion') resultadoFinal = res.config;
+            else if (prop === 'obtenerProductos') resultadoFinal = res.productos;
+            else if (prop === 'obtenerClientes') resultadoFinal = res.clientes;
+            else if (prop === 'obtenerHistorialVentas') resultadoFinal = res.ventas;
+            else if (prop === 'obtenerDashboard') resultadoFinal = res.dashboard;
+            else if (prop === 'obtenerReporteExcel') resultadoFinal = res;
+            else if (prop === 'obtenerDetalleVenta') resultadoFinal = res;
+
+            if (target.successHandler) target.successHandler(resultadoFinal);
+            target.successHandler = null;
+          })
+          .catch(err => {
+            if (target.failureHandler) target.failureHandler(err);
+            else console.error("Error en petición:", err);
+            target.failureHandler = null;
+          });
+        };
+      }
+    };
+
+    google.script.run = new Proxy(google.script.run, handler);
+  </script>
 
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -438,130 +502,6 @@
 <div id="toast"></div>
 
 <script>
-/*
- * ============================================================
- * CONEXIÓN GITHUB PAGES -> GOOGLE APPS SCRIPT
- * ============================================================
- *
- * 1. Despliega Code.gs como "Aplicación web".
- * 2. Copia la URL /exec aquí.
- * 3. NO pongas contraseñas, claves API ni credenciales en este archivo.
- *
- * Ejemplo:
- * const API_URL = 'https://script.google.com/macros/s/XXXXXXXX/exec';
- */
-const API_URL = 'PEGAR_AQUI_URL_DE_TU_WEB_APP';
-
-/*
- * Compatibilidad con el código original:
- * mantenemos google.script.run como interfaz interna, pero ahora
- * las llamadas salen desde GitHub mediante JSONP hacia Apps Script.
- *
- * Esto permite conservar las funciones existentes del HTML sin
- * reescribir una por una.
- */
-(function configurarApiGitHub() {
-  let contador = 0;
-
-  function llamarAPI(accion, datos, onSuccess, onFailure) {
-    if (!API_URL || API_URL.indexOf('PEGAR_AQUI') !== -1) {
-      const error = new Error('Configura API_URL con la URL /exec de tu Web App de Apps Script.');
-      if (onFailure) onFailure(error);
-      else mostrarToast(error.message);
-      return;
-    }
-
-    const callbackName = '__appsScriptCallback_' + Date.now() + '_' + (++contador);
-    const script = document.createElement('script');
-
-    const params = new URLSearchParams();
-    params.set('action', accion);
-    params.set('callback', callbackName);
-
-    if (datos !== undefined && datos !== null) {
-      params.set('data', JSON.stringify(datos));
-    }
-
-    let terminado = false;
-    const limpiar = () => {
-      if (terminado) return;
-      terminado = true;
-      try { delete window[callbackName]; } catch (_) {}
-      if (script.parentNode) script.parentNode.removeChild(script);
-    };
-
-    window[callbackName] = function(resultado) {
-      limpiar();
-      if (onSuccess) onSuccess(resultado);
-    };
-
-    script.onerror = function() {
-      limpiar();
-      const error = new Error('No se pudo conectar con Apps Script.');
-      if (onFailure) onFailure(error);
-      else mostrarToast(error.message);
-    };
-
-    script.src = API_URL + (API_URL.includes('?') ? '&' : '?') + params.toString();
-    document.head.appendChild(script);
-
-    // Evita dejar callbacks vivos indefinidamente.
-    setTimeout(() => {
-      if (!terminado) {
-        limpiar();
-        const error = new Error('Tiempo de espera agotado al conectar con Apps Script.');
-        if (onFailure) onFailure(error);
-        else mostrarToast(error.message);
-      }
-    }, 30000);
-  }
-
-  function crearRunner() {
-    let successHandler = null;
-    let failureHandler = null;
-
-    return new Proxy({}, {
-      get(_, propiedad) {
-        if (propiedad === 'withSuccessHandler') {
-          return function(fn) {
-            successHandler = fn;
-            return runner;
-          };
-        }
-
-        if (propiedad === 'withFailureHandler') {
-          return function(fn) {
-            failureHandler = fn;
-            return runner;
-          };
-        }
-
-        if (propiedad === 'withUserObject') {
-          // Compatibilidad adicional con google.script.run.
-          return function() {
-            return runner;
-          };
-        }
-
-        return function(datos) {
-          llamarAPI(propiedad, datos, successHandler, failureHandler);
-        };
-      }
-    });
-
-    var runner;
-  }
-
-  // Creamos un runner por cadena de llamada.
-  window.google = {
-    script: {
-      get run() {
-        return crearRunner();
-      }
-    }
-  };
-})();
-
 let usuarioActual = null;
 let carrito = [];
 let productosCache = [];
@@ -1294,7 +1234,7 @@ function guardarClienteUI() {
     .guardarCliente(datos);
 }
 
-// Inicializar configuración al cargar la página en el navegador
+// Inicializar configuración al cargar la página
 cargarConfiguracionSistema();
 </script>
 
