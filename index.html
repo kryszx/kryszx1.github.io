@@ -8,69 +8,6 @@
   <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/kryszx/kryszx1.github.io/refs/heads/main/Logo1.png">
   <title>Kryszx Tecnologia</title>
 
-  <!-- PUENTE DE CONEXIÓN ENTRE GITHUB Y GOOGLE APPS SCRIPT -->
-  <script>
-    const URL_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbxEUAYg2NwEUIMzAGKTkbwOb-0OmpUoyrGrm-PFyVpNeQzuf9ETfWAGzTLSqF0IRpQ6/exec";
-
-    const google = {
-      script: {
-        run: {
-          withSuccessHandler: function(callbackSuccess) {
-            this.successHandler = callbackSuccess;
-            return this;
-          },
-          withFailureHandler: function(callbackFailure) {
-            this.failureHandler = callbackFailure;
-            return this;
-          }
-        }
-      }
-    };
-
-    const handler = {
-      get: function(target, prop) {
-        if (prop === 'withSuccessHandler' || prop === 'withFailureHandler') {
-          return target[prop].bind(target);
-        }
-        return function(...args) {
-          let datosEnvio = null;
-          if (prop === 'login') datosEnvio = { usuario: args[0], contrasena: args[1] };
-          else if (prop === 'buscarProductoPorBarcode') datosEnvio = { codigo: args[0] };
-          else if (prop === 'eliminarProducto') datosEnvio = { id: args[0] };
-          else if (prop === 'obtenerDetalleVenta') datosEnvio = { numeroVenta: args[0] };
-          else if (args.length > 0) datosEnvio = args[0];
-
-          fetch(URL_APPS_SCRIPT, {
-            method: 'POST',
-            body: JSON.stringify({ accion: prop, datos: datosEnvio })
-          })
-          .then(response => response.json())
-          .then(res => {
-            let resultadoFinal = res;
-            if (prop === 'login') resultadoFinal = res;
-            else if (prop === 'obtenerConfiguracion') resultadoFinal = res.config;
-            else if (prop === 'obtenerProductos') resultadoFinal = res.productos;
-            else if (prop === 'obtenerClientes') resultadoFinal = res.clientes;
-            else if (prop === 'obtenerHistorialVentas') resultadoFinal = res.ventas;
-            else if (prop === 'obtenerDashboard') resultadoFinal = res.dashboard;
-            else if (prop === 'obtenerReporteExcel') resultadoFinal = res;
-            else if (prop === 'obtenerDetalleVenta') resultadoFinal = res;
-
-            if (target.successHandler) target.successHandler(resultadoFinal);
-            target.successHandler = null;
-          })
-          .catch(err => {
-            if (target.failureHandler) target.failureHandler(err);
-            else console.error("Error en petición:", err);
-            target.failureHandler = null;
-          });
-        };
-      }
-    };
-
-    google.script.run = new Proxy(google.script.run, handler);
-  </script>
-
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: Arial, Helvetica, sans-serif; background: #f4f6f9; color: #222; }
@@ -502,6 +439,106 @@
 <div id="toast"></div>
 
 <script>
+// =========================================================================
+// PUENTE DE INTEGRACIÓN GITHUB PAGES <-> GOOGLE APPS SCRIPT
+// =========================================================================
+const URL_WEB_APP = "https://script.google.com/macros/s/AKfycbxEUAYg2NwEUIMzAGKTkbwOb-0OmpUoyrGrm-PFyVpNeQzuf9ETfWAGzTLSqF0IRpQ6/exec";
+
+class GASRequest {
+  constructor() {
+    this.successFn = null;
+    this.failureFn = null;
+  }
+  withSuccessHandler(fn) {
+    this.successFn = fn;
+    return this;
+  }
+  withFailureHandler(fn) {
+    this.failureFn = fn;
+    return this;
+  }
+  execute(methodProp, args) {
+    let datos = null;
+    switch(methodProp) {
+      case 'login':
+        datos = { usuario: args[0], contrasena: args[1] };
+        break;
+      case 'buscarProductoPorBarcode':
+        datos = { codigo: args[0] };
+        break;
+      case 'registrarVenta':
+        datos = args[0];
+        break;
+      case 'obtenerDetalleVenta':
+        datos = { numeroVenta: args[0] };
+        break;
+      case 'guardarProducto':
+        datos = args[0];
+        break;
+      case 'eliminarProducto':
+        datos = { id: args[0] };
+        break;
+      case 'guardarCliente':
+        datos = args[0];
+        break;
+      case 'guardarConfiguracion':
+        datos = args[0];
+        break;
+      default:
+        datos = args[0] || null;
+    }
+
+    fetch(URL_WEB_APP, {
+      method: 'POST',
+      body: JSON.stringify({ accion: methodProp, datos: datos })
+    })
+    .then(res => res.json())
+    .then(json => {
+      if (this.successFn) this.successFn(json);
+    })
+    .catch(err => {
+      if (this.failureFn) this.failureFn(err);
+      else console.error("Error en petición GAS:", err);
+    });
+  }
+}
+
+const google = {
+  script: {
+    run: new Proxy({}, {
+      get(target, prop) {
+        if (prop === 'withSuccessHandler' || prop === 'withFailureHandler') {
+          const req = new GASRequest();
+          return function(fn) {
+            if (prop === 'withSuccessHandler') req.withSuccessHandler(fn);
+            else req.withFailureHandler(fn);
+            
+            return new Proxy(req, {
+              get(rTarget, rProp) {
+                if (rProp === 'withSuccessHandler' || rProp === 'withFailureHandler') {
+                  return function(fn2) {
+                    if (rProp === 'withSuccessHandler') rTarget.withSuccessHandler(fn2);
+                    else rTarget.withFailureHandler(fn2);
+                    return rTarget;
+                  };
+                }
+                return function(...args) {
+                  rTarget.execute(rProp, args);
+                };
+              }
+            });
+          };
+        }
+        return function(...args) {
+          const req = new GASRequest();
+          req.execute(prop, args);
+        };
+      }
+    })
+  }
+};
+// =========================================================================
+
 let usuarioActual = null;
 let carrito = [];
 let productosCache = [];
@@ -510,7 +547,7 @@ let historialCache = [];
 let intervalAutoSync = null;
 
 let configSistema = {
-  NOMBRE_NEGOCIO: 'EL MUNDO DE ARI',
+  NOMBRE_NEGOCIO: 'KRYSZX TECNOLOGIA',
   NIT: '',
   TELEFONO: '',
   DIRECCION: '',
@@ -557,8 +594,8 @@ function mostrarConfirmacion(titulo, mensaje, onAceptar) {
 
 function cargarConfiguracionSistema() {
   google.script.run.withSuccessHandler(function(cfg) {
-    if (cfg && cfg.NOMBRE_NEGOCIO) {
-      configSistema = cfg;
+    if (cfg && cfg.config) {
+      configSistema = cfg.config;
       document.getElementById('loginTituloNegocio').textContent = configSistema.NOMBRE_NEGOCIO;
       document.getElementById('sidebarTituloNegocio').textContent = configSistema.NOMBRE_NEGOCIO;
     }
@@ -637,7 +674,7 @@ function cargarSistema() {
 function cargarSistemaSilencioso() {
   cargarDashboard();
   cargarHistorial();
-  google.script.run.withSuccessHandler(function(prods) { productosCache = prods; }).obtenerProductos();
+  google.script.run.withSuccessHandler(function(res) { if(res.productos) productosCache = res.productos; }).obtenerProductos();
 }
 
 function mostrarSeccion(nombre, boton) {
@@ -665,7 +702,9 @@ function mostrarSeccion(nombre, boton) {
 /* DASHBOARD */
 function cargarDashboard() {
   google.script.run
-    .withSuccessHandler(function(data) {
+    .withSuccessHandler(function(res) {
+      const data = res.dashboard;
+      if (!data) return;
       document.getElementById('dashVentas').textContent = data.ventasHoy;
       document.getElementById('dashTotal').textContent = formatoCOP(data.totalHoy);
       document.getElementById('dashProductos').textContent = data.productos;
@@ -731,8 +770,8 @@ function procesarBarcode() {
 /* PRODUCTOS */
 function cargarProductos() {
   google.script.run
-    .withSuccessHandler(function(productos) {
-      productosCache = productos;
+    .withSuccessHandler(function(res) {
+      productosCache = res.productos || [];
       renderTablaProductos();
     })
     .obtenerProductos();
@@ -1141,8 +1180,8 @@ function descargarReporteExcel() {
 /* HISTORIAL */
 function cargarHistorial() {
   google.script.run
-    .withSuccessHandler(function(ventas) {
-      historialCache = ventas || [];
+    .withSuccessHandler(function(res) {
+      historialCache = res.ventas || [];
       renderHistorial();
     })
     .withFailureHandler(function(err) {
@@ -1183,12 +1222,12 @@ function renderHistorial() {
 /* CLIENTES */
 function cargarClientes() {
   google.script.run
-    .withSuccessHandler(function(clientes) {
-      clientesCache = clientes;
+    .withSuccessHandler(function(res) {
+      clientesCache = res.clientes || [];
       renderTablaClientes();
       const sel = document.getElementById('ventaCliente');
       sel.innerHTML = '';
-      clientes.forEach(c => {
+      clientesCache.forEach(c => {
         sel.innerHTML += `<option value="${c.ID}">${escapeHTML(c.NOMBRE)}</option>`;
       });
     })
@@ -1234,7 +1273,7 @@ function guardarClienteUI() {
     .guardarCliente(datos);
 }
 
-// Inicializar configuración al cargar la página
+// Inicializar configuración al cargar la página en el navegador
 cargarConfiguracionSistema();
 </script>
 
