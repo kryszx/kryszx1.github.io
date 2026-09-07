@@ -195,6 +195,8 @@ button,input,select,textarea{font:inherit}button{cursor:pointer}
 /* IMPORTANTE: pegue aquí la URL /exec de su Web App de Apps Script */
 const API_URL='https://script.google.com/macros/s/AKfycbz4OE0nx7R4zLgNSLhsYvM2xlnRBLoelxDBWTUsKxmauEYmb43P7NjmETUDJgH9j_8j/exec';
 let token='', user=null, clients=[], products=[], services=[], currentInvoice=null;
+const loginScreen = document.getElementById('login');
+const appEl = document.getElementById('app');
 
 function api(action,data={}){return new Promise((resolve,reject)=>{
   if(!API_URL || API_URL.includes('PEGA_AQUI')) return reject(new Error('Configure API_URL en Index.html.'));
@@ -211,8 +213,8 @@ function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&l
 function toast(s){const x=document.getElementById('toast');x.textContent=s;x.classList.add('show');setTimeout(()=>x.classList.remove('show'),3000)}
 function closeModal(id){document.getElementById(id).classList.remove('show')}
 function showSection(id,btn){document.querySelectorAll('.section').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));if(btn)btn.classList.add('active');document.getElementById('sectionTitle').textContent=({dashboard:'Dashboard',ordenes:'Reparaciones',clientes:'Clientes',facturas:'Facturación',inventario:'Inventario',finanzas:'Finanzas',servicios:'Servicios',proveedores:'Proveedores',config:'Configuración'})[id]||id;loadSection(id)}
-async function login(){try{const r=await api('login',{usuario:loginUser.value,contrasena:loginPass.value});if(!r.ok){loginMsg.textContent=r.mensaje;return}token=r.token;user=r.usuario;userName.textContent=user.nombre;login.style.display='none';app.style.display='block';await loadAll();toast('Bienvenido a COMPUINVA')}catch(e){loginMsg.textContent=e.message}}
-async function logout(){if(token)await api('logout');token='';user=null;app.style.display='none';login.style.display='flex'}
+async function login(){try{const r=await api('login',{usuario:loginUser.value,contrasena:loginPass.value});if(!r.ok){loginMsg.textContent=r.mensaje;return}token=r.token;user=r.usuario;userName.textContent=user.nombre;loginScreen.style.display='none';appEl.style.display='block';await loadAll();toast('Bienvenido a COMPUINVA')}catch(e){loginMsg.textContent=e.message}}
+async function logout(){if(token)await api('logout');token='';user=null;appEl.style.display='none';loginScreen.style.display='flex'}
 async function loadAll(){await Promise.all([loadDashboard(),loadClients(),loadProducts(),loadServices(),loadOrders(),loadInvoices(),loadConfig(),loadSuppliers()]);fillMonths()}
 async function loadSection(id){if(id==='dashboard')loadDashboard();if(id==='ordenes')loadOrders();if(id==='clientes')loadClients();if(id==='facturas')loadInvoices();if(id==='inventario')loadProducts();if(id==='finanzas')loadMonthly();if(id==='servicios')loadServices();if(id==='proveedores')loadSuppliers();if(id==='config')loadConfig()}
 async function loadDashboard(){try{const d=await api('obtenerDashboard');dVentas.textContent=money(d.ventasHoy);dGanancia.textContent=money(d.gananciaHoy);dGastos.textContent=money(d.gastosHoy);dPendientes.textContent=d.ordenesPendientes;dFacturas.textContent=d.facturasHoy;dClientes.textContent=d.clientes;dProductos.textContent=d.productos;dStock.textContent=d.stockBajo;estadoChart.innerHTML=Object.entries(d.reparacionesPorEstado||{}).map(([k,v])=>`<div style="display:flex;justify-content:space-between;padding:7px;border-bottom:1px solid #eee"><span>${esc(k)}</span><b>${v}</b></div>`).join('')||'<div class="empty">Sin datos</div>';stockList.innerHTML=(d.productosStockBajo||[]).map(p=>`<div style="padding:8px;border-bottom:1px solid #eee"><b>${esc(p.NOMBRE)}</b> — stock ${p.STOCK} / mínimo ${p.STOCK_MINIMO}</div>`).join('')||'<div class="empty">Inventario saludable</div>'}catch(e){toast(e.message)}}
