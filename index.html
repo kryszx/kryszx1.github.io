@@ -1,1164 +1,257 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/kryszx/kryszx1.github.io/refs/heads/main/Logo1.png">
-  <title>Kryszx Tecnologia</title>
-
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: Arial, Helvetica, sans-serif; background: #f4f6f9; color: #222; }
-    button, input, select { font-family: inherit; }
-    button { cursor: pointer; }
-
-    #loginView {
-      min-height: 100vh; display: flex; align-items: center; justify-content: center;
-      background: linear-gradient(135deg, #111827, #374151); padding: 20px;
-    }
-    .login-card { width: 100%; max-width: 420px; background: white; border-radius: 18px; padding: 35px; box-shadow: 0 20px 50px rgba(0,0,0,.25); }
-    .logo { text-align: center; margin-bottom: 30px; }
-    .logo-icon { width: 70px; height: 70px; margin: auto; border-radius: 18px; display: flex; align-items: center; justify-content: center; background: #111827; color: white; font-size: 30px; font-weight: bold; }
-    .logo h1 { margin-top: 15px; font-size: 24px; }
-    .logo p { color: #777; margin-top: 5px; }
-
-    .form-group { margin-bottom: 18px; }
-    .form-group label { display: block; margin-bottom: 7px; font-size: 14px; font-weight: bold; }
-    .form-group input, .form-group select { width: 100%; padding: 13px; border: 1px solid #ddd; border-radius: 9px; outline: none; font-size: 15px; }
-    .form-group input:focus, .form-group select:focus { border-color: #111827; }
-
-    .btn { border: none; border-radius: 9px; padding: 12px 18px; font-weight: bold; transition: .2s; }
-    .btn:hover { transform: translateY(-1px); }
-    .btn-primary { background: #111827; color: white; }
-    .btn-success { background: #15803d; color: white; }
-    .btn-danger { background: #dc2626; color: white; }
-    .btn-secondary { background: #e5e7eb; color: #124cc9; }
-    .btn-warning { background: #d97706; color: white; }
-    .btn-full { width: 100%; }
-
-    .error { color: #dc2626; font-size: 14px; margin-top: 12px; text-align: center; }
-
-    #appView { display: none; min-height: 100vh; }
-    .layout { display: flex; min-height: 100vh; }
-    .sidebar { width: 240px; background: #111827; color: white; padding: 20px 15px; flex-shrink: 0; }
-    .sidebar-logo { text-align: center; padding: 15px 5px 25px; border-bottom: 1px solid #374151; margin-bottom: 20px; }
-    .sidebar-logo h2 { font-size: 19px; }
-    .sidebar-logo small { color: #9ca3af; }
-
-    .menu { display: flex; flex-direction: column; gap: 7px; }
-    .menu button { width: 100%; text-align: left; border: none; background: transparent; color: #d1d5db; padding: 13px; border-radius: 8px; font-size: 14px; }
-    .menu button:hover, .menu button.active { background: #374151; color: white; }
-    .logout { margin-top: 30px; border-top: 1px solid #374151; padding-top: 20px; }
-
-    .main { flex: 1; min-width: 0; }
-    .topbar { height: 70px; background: white; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; justify-content: space-between; padding: 0 25px; }
-    .topbar h2 { font-size: 20px; }
-    .user-info { font-size: 14px; color: #555; }
-    .content { padding: 25px; }
-
-    .section { display: none; }
-    .section.active { display: block; }
-
-    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 18px; margin-bottom: 25px; }
-    .card { background: white; border-radius: 12px; padding: 20px; border: 1px solid #e5e7eb; }
-    .card-title { color: #6b7280; font-size: 14px; margin-bottom: 10px; }
-    .card-value { font-size: 28px; font-weight: bold; }
-
-    .card-alert { background-color: #fef2f2 !important; border: 1px solid #fca5a5 !important; }
-    .card-alert .card-value { color: #dc2626 !important; }
-    .row-stock-alert { background-color: #fef2f2 !important; color: #991b1b !important; font-weight: bold; }
-    .badge-danger { background-color: #dc2626; color: #ffffff; padding: 3px 8px; border-radius: 4px; font-size: 0.85rem; }
-
-    .panel { background: white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
-    .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 10px; flex-wrap: wrap; }
-    .panel-header h3 { font-size: 18px; }
-
-    .table-container { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; min-width: 650px; }
-    th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; font-size: 14px; }
-    th { background: #f9fafb; font-weight: bold; }
-
-    .sale-grid { display: grid; grid-template-columns: minmax(0, 1fr) 420px; gap: 20px; }
-    .barcode-box { display: flex; gap: 10px; margin-bottom: 20px; }
-    .barcode-box input { flex: 1; padding: 14px; border: 2px solid #111827; border-radius: 9px; font-size: 17px; outline: none; }
-
-    .search-results { display: grid; gap: 8px; margin-bottom: 15px; }
-    .product-result { display: flex; justify-content: space-between; align-items: center; background: #f9fafb; border: 1px solid #eee; border-radius: 8px; padding: 12px; gap: 10px; }
-    .product-result-info strong { display: block; margin-bottom: 4px; }
-    .product-result-info small { color: #777; }
-
-    .cart { min-height: 250px; }
-    .cart-item { display: grid; grid-template-columns: 1fr auto auto; gap: 10px; align-items: center; padding: 12px 0; border-bottom: 1px solid #eee; }
-    .cart-item-info strong { display: block; }
-    .cart-item-info small { color: #777; }
-    .qty-control { display: flex; align-items: center; gap: 7px; }
-    .qty-control button { width: 30px; height: 30px; border: none; border-radius: 6px; background: #e5e7eb; font-weight: bold; }
-    .remove-item { color: #dc2626; background: none; border: none; font-size: 18px; margin-left: 5px; }
-
-    .sale-summary { border-top: 2px solid #eee; padding-top: 15px; margin-top: 15px; }
-    .summary-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; gap: 15px; }
-    .summary-total { font-size: 23px; font-weight: bold; margin-top: 8px; }
-
-    .payment-box { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 10px; padding: 15px; margin-top: 15px; margin-bottom: 10px; }
-    .payment-box-title { font-weight: bold; margin-bottom: 12px; }
-    .change-display { background: #ecfdf5; border: 1px solid #bbf7d0; border-radius: 9px; padding: 13px; margin-top: 10px; }
-    .change-display.insufficient { background: #fef2f2; border-color: #fecaca; color: #b91c1c; }
-    .change-label { font-size: 13px; color: #555; margin-bottom: 4px; }
-    .change-display.insufficient .change-label { color: #b91c1c; }
-    .change-value { font-size: 23px; font-weight: bold; }
-
-    .modal { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, .55); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
-    .modal.show { display: flex; }
-    .modal-card { background: white; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; border-radius: 14px; padding: 25px; }
-    .modal-header { display: flex; justify-content: space-between; margin-bottom: 20px; }
-    .close-modal { border: none; background: none; font-size: 24px; }
-
-    #toast { position: fixed; bottom: 25px; right: 25px; background: #111827; color: white; padding: 14px 20px; border-radius: 9px; display: none; z-index: 2000; box-shadow: 0 10px 30px rgba(0,0,0,.2); }
-    #toast.show { display: block; }
-
-    @media (max-width: 900px) { .sidebar { width: 200px; } .sale-grid { grid-template-columns: 1fr; } }
-    @media (max-width: 700px) { .layout { flex-direction: column; } .sidebar { width: 100%; } .menu { display: grid; grid-template-columns: repeat(3, 1fr); } .logout { margin-top: 10px; } .content { padding: 15px; } .topbar { padding: 0 15px; } .barcode-box { flex-direction: column; } }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>COMPUINVA | Centro de Reparaciones</title>
+<style>
+:root{--primary:#2563eb;--dark:#0f172a;--bg:#f1f5f9;--card:#fff;--muted:#64748b;--line:#e2e8f0;--ok:#16a34a;--danger:#dc2626;--warn:#d97706}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:#0f172a}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+.login{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f172a,#1d4ed8);padding:20px}
+.login-card{background:white;width:100%;max-width:420px;border-radius:22px;padding:35px;box-shadow:0 25px 60px #0004;text-align:center}.brand{font-size:30px;font-weight:900}.brand small{display:block;font-size:13px;color:var(--muted);margin-top:5px}
+.form{display:grid;gap:13px;text-align:left}.form label{font-weight:700;font-size:13px}.form input,.form select,.form textarea{width:100%;padding:11px;border:1px solid var(--line);border-radius:10px;outline:none}.form input:focus,.form select:focus,.form textarea:focus{border-color:var(--primary)}
+.btn{border:0;border-radius:10px;padding:10px 14px;font-weight:700}.primary{background:var(--primary);color:#fff}.secondary{background:#e2e8f0}.success{background:var(--ok);color:#fff}.danger{background:var(--danger);color:#fff}.warning{background:var(--warn);color:#fff}.ghost{background:transparent;color:inherit}.full{width:100%}
+#app{display:none}.layout{min-height:100vh;display:flex}.side{width:245px;background:var(--dark);color:#fff;padding:18px;position:fixed;inset:0 auto 0 0;z-index:20}.side .logo{font-size:22px;font-weight:900;padding:10px 5px 20px}.side .logo span{display:block;font-size:11px;color:#94a3b8;margin-top:4px}.nav{display:grid;gap:6px}.nav button{background:transparent;color:#cbd5e1;text-align:left;border:0;padding:11px 12px;border-radius:10px}.nav button:hover,.nav button.active{background:#1e293b;color:#fff}.side-bottom{position:absolute;bottom:20px;left:18px;right:18px}.main{margin-left:245px;width:calc(100% - 245px)}.top{height:70px;background:white;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 25px;position:sticky;top:0;z-index:10}.top h1{font-size:21px;margin:0}.content{padding:25px}.section{display:none}.section.active{display:block}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}.card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:18px}.card .label{font-size:12px;color:var(--muted);font-weight:700}.card .value{font-size:26px;font-weight:900;margin-top:7px}.grid{display:grid;gap:15px}.grid2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid3{grid-template-columns:repeat(3,minmax(0,1fr))}.panel{background:#fff;border:1px solid var(--line);border-radius:15px;padding:18px;margin-top:18px}.panel-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}.panel-title h2{font-size:17px;margin:0}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:760px}th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left;font-size:13px}th{background:#f8fafc;font-size:12px}.badge{display:inline-block;padding:5px 8px;border-radius:999px;background:#e2e8f0;font-size:11px;font-weight:800}.badge.ok{background:#dcfce7;color:#166534}.badge.warn{background:#fef3c7;color:#92400e}.badge.danger{background:#fee2e2;color:#991b1b}.modal{display:none;position:fixed;inset:0;background:#0008;z-index:100;align-items:center;justify-content:center;padding:20px}.modal.show{display:flex}.modal-box{background:#fff;width:100%;max-width:720px;max-height:90vh;overflow:auto;border-radius:18px;padding:22px}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.modal-head h3{margin:0}.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.form-grid .wide{grid-column:1/-1}.toast{position:fixed;right:20px;bottom:20px;background:#111827;color:#fff;padding:13px 18px;border-radius:10px;z-index:200;display:none;box-shadow:0 10px 30px #0004}.toast.show{display:block}.filters{display:flex;gap:10px;flex-wrap:wrap}.filters input,.filters select{padding:9px;border:1px solid var(--line);border-radius:9px}.money{font-weight:900}.muted{color:var(--muted)}.empty{text-align:center;color:var(--muted);padding:30px}.actions{display:flex;gap:6px;flex-wrap:wrap}.ticket{width:80mm;margin:0 auto;font-family:Arial,sans-serif;font-size:12px;color:#000}.ticket h2{text-align:center;margin:0}.ticket .center{text-align:center}.ticket hr{border:0;border-top:1px dashed #000}.ticket table{min-width:0;font-size:11px}.ticket th,.ticket td{border:0;padding:2px}.ticket .total{font-size:15px;font-weight:bold}.print-only{display:none}
+@media(max-width:1000px){.cards{grid-template-columns:repeat(2,1fr)}.side{width:210px}.main{margin-left:210px;width:calc(100% - 210px)}}
+@media(max-width:700px){.side{position:static;width:100%;height:auto}.side-bottom{position:static;margin-top:15px}.layout{display:block}.main{margin-left:0;width:100%}.nav{grid-template-columns:repeat(3,1fr)}.top{padding:0 15px}.content{padding:15px}.cards,.grid2,.grid3,.form-grid{grid-template-columns:1fr}.form-grid .wide{grid-column:auto}}
+@media print{body *{visibility:hidden}.print-only,.print-only *{visibility:visible}.print-only{display:block;position:absolute;left:0;top:0;width:80mm}.no-print{display:none!important}}
+</style>
 </head>
-
 <body>
 
-<!-- LOGIN -->
-<div id="loginView">
+<div id="login" class="login">
   <div class="login-card">
-    <div class="logo">
-      <div class="logo-container" style="text-align: center; margin-bottom: 20px;">
-        <img src="https://raw.githubusercontent.com/kryszx/kryszx1.github.io/refs/heads/main/Logo1.png" alt="Logo" style="width: 100px; height: 100px; object-fit: contain;">
-      </div>
-      <h1 id="loginTituloNegocio">KRYSZX TECNOLOGIA</h1>
-      <p>Sistema de Punto de Venta</p>
-    </div>
-
-    <div class="form-group">
-      <label>👤 Usuario</label>
-      <input type="text" id="loginUsuario" placeholder="Ingrese usuario" autocomplete="username">
-    </div>
-
-    <div class="form-group">
-      <label>🔐 Contraseña</label>
-      <input type="password" id="loginContrasena" placeholder="Ingrese contraseña" autocomplete="current-password">
-    </div>
-
-    <button class="btn btn-primary btn-full" onclick="iniciarSesion()">INGRESAR AL PANEL</button>
-    <div id="loginError" class="error"></div>
-  </div>
-</div>
-
-<!-- APLICACIÓN -->
-<div id="appView">
-  <div class="layout">
-    <aside class="sidebar">
-      <div class="sidebar-logo" style="text-align: center; padding: 10px 0;">
-       <img src="https://raw.githubusercontent.com/kryszx/kryszx1.github.io/refs/heads/main/Logo1.png" alt="Logo" style="width: 100px; height: 100px; object-fit: contain; border-radius: 50%; margin-bottom: 5px;">
-       <h2 id="sidebarTituloNegocio" style="font-size: 15px; margin: 0; color: #fff;">KRYSZX TECNOLOGIA</h2>
-      </div>
-
-      <div class="menu">
-        <button class="active" onclick="mostrarSeccion('inicio', this)">🏠 Inicio</button>
-        <button onclick="mostrarSeccion('venta', this)">🛒 Venta</button>
-        <button onclick="mostrarSeccion('productos', this)">📦 Productos</button>
-        <button onclick="mostrarSeccion('clientes', this)">👥 Clientes</button>
-        <button onclick="mostrarSeccion('historial', this)">📜 Historial</button>
-        <button onclick="mostrarSeccion('configuracion', this)">⚙️ Configuración</button>
-      </div>
-
-      <div class="logout">
-        <button class="btn btn-danger btn-full" onclick="cerrarSesion()">🚪 Cerrar sesión</button>
-      </div>
-    </aside>
-
-    <main class="main">
-      <header class="topbar">
-        <h2 id="tituloSeccion">Inicio</h2>
-        <div class="user-info">👤 <span id="nombreUsuario">Administrador</span></div>
-      </header>
-
-      <div class="content">
-
-        <!-- INICIO -->
-        <section id="seccion-inicio" class="section active">
-          <div class="cards">
-            <div class="card"><div class="card-title">Ventas de hoy</div><div class="card-value" id="dashVentas">0</div></div>
-            <div class="card"><div class="card-title">Total vendido hoy</div><div class="card-value" id="dashTotal">$0</div></div>
-            <div class="card"><div class="card-title">Productos</div><div class="card-value" id="dashProductos">0</div></div>
-            <div class="card"><div class="card-title">Clientes</div><div class="card-value" id="dashClientes">0</div></div>
-            <div class="card" id="card-stock-bajo"><div class="card-title">Stock bajo</div><div class="card-value" id="dashStockBajo">0</div></div>
-          </div>
-
-          <div class="panel">
-            <div class="panel-header"><h3>Productos con stock bajo</h3></div>
-            <div class="table-container">
-              <table>
-                <thead>
-                  <tr><th>Producto</th><th>Código</th><th>Stock</th><th>Mínimo</th></tr>
-                </thead>
-                <tbody id="tablaStockBajo"></tbody>
-              </table>
-            </div>
-          </div>
-        </section>
-
-        <!-- VENTA -->
-        <section id="seccion-venta" class="section">
-          <div class="sale-grid">
-            <div class="panel">
-              <div class="panel-header"><h3>Nueva venta</h3></div>
-              <div class="barcode-box">
-                <input type="text" id="barcodeInput" placeholder="Código de barras..." autocomplete="off" onkeydown="barcodeKeyDown(event)">
-                <button class="btn btn-primary" onclick="procesarBarcode()">Agregar</button>
-              </div>
-              <div class="form-group">
-                <input type="text" id="buscarProductoInput" placeholder="Buscar por nombre..." oninput="buscarProductosUI()">
-              </div>
-              <div id="resultadosProductos" class="search-results"></div>
-            </div>
-
-            <div class="panel">
-              <div class="panel-header">
-                <h3>Carrito</h3>
-                <button class="btn btn-secondary" onclick="vaciarCarrito()">Vaciar</button>
-              </div>
-
-              <div id="carrito" class="cart"><p style="color:#777; text-align:center;">El carrito está vacío.</p></div>
-
-              <div class="sale-summary">
-                <div class="summary-row"><span>Subtotal</span><strong id="ventaSubtotal">$0</strong></div>
-
-                <div class="form-group">
-                  <label>Descuento</label>
-                  <input type="number" id="ventaDescuento" value="0" min="0" oninput="actualizarResumen()">
-                </div>
-
-                <div class="form-group">
-                  <label>Cliente</label>
-                  <select id="ventaCliente"></select>
-                </div>
-
-                <div class="form-group">
-                  <label>Método de pago</label>
-                  <select id="ventaMetodoPago" onchange="actualizarMetodoPago()">
-                    <option value="Efectivo">Efectivo</option>
-                    <option value="Nequi">Nequi</option>
-                    <option value="Daviplata">Daviplata</option>
-                    <option value="Transferencia">Transferencia</option>
-                    <option value="Tarjeta">Tarjeta</option>
-                  </select>
-                </div>
-
-                <div id="paymentBox" class="payment-box">
-                  <div class="payment-box-title">💵 Pago en efectivo</div>
-                  <div class="form-group">
-                    <label>¿Con cuánto paga?</label>
-                    <input type="number" id="valorRecibido" min="0" placeholder="$ 0" oninput="calcularCambio()">
-                  </div>
-
-                  <div id="changeDisplay" class="change-display">
-                    <div class="change-label">Cambio</div>
-                    <div id="cambioValor" class="change-value">$0</div>
-                  </div>
-                </div>
-
-                <div class="summary-row summary-total">
-                  <span>TOTAL</span>
-                  <span id="ventaTotal">$0</span>
-                </div>
-
-                <button class="btn btn-success btn-full" style="margin-top:15px;" onclick="finalizarVenta()">
-                  💰 FINALIZAR VENTA
-                </button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- PRODUCTOS -->
-        <section id="seccion-productos" class="section">
-          <div class="panel">
-            <div class="panel-header">
-              <h3>Productos</h3>
-              <button class="btn btn-primary" onclick="abrirModalProducto()">+ Nuevo producto</button>
-            </div>
-            <div class="form-group">
-              <input type="text" id="buscarProductoTabla" placeholder="Buscar producto..." oninput="filtrarTablaProductos()">
-            </div>
-            <div class="table-container">
-              <table>
-                <thead>
-                  <tr><th>ID</th><th>Código</th><th>Producto</th><th>Categoría</th><th>Precio</th><th>Stock</th><th>Acciones</th></tr>
-                </thead>
-                <tbody id="tablaProductos"></tbody>
-              </table>
-            </div>
-          </div>
-        </section>
-
-        <!-- CLIENTES -->
-        <section id="seccion-clientes" class="section">
-          <div class="panel">
-            <div class="panel-header">
-              <h3>Clientes</h3>
-              <button class="btn btn-primary" onclick="abrirModalCliente()">+ Nuevo cliente</button>
-            </div>
-            <div class="form-group">
-              <input type="text" id="buscarClienteTabla" placeholder="Buscar cliente..." oninput="filtrarTablaClientes()">
-            </div>
-            <div class="table-container">
-              <table>
-                <thead>
-                  <tr><th>ID</th><th>Documento</th><th>Nombre</th><th>Teléfono</th><th>Correo</th></tr>
-                </thead>
-                <tbody id="tablaClientes"></tbody>
-              </table>
-            </div>
-          </div>
-        </section>
-
-        <!-- HISTORIAL -->
-        <section id="seccion-historial" class="section">
-          <div class="panel">
-            <div class="panel-header">
-              <h3>Historial de ventas</h3>
-              <div style="display:flex; gap:10px;">
-                <button class="btn btn-secondary" onclick="cargarHistorial()">🔄 Cargar Ventas</button>
-                <button class="btn btn-success" onclick="descargarReporteExcel()">📥 Exportar Excel</button>
-              </div>
-            </div>
-            <div class="table-container">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Venta</th>
-                    <th>Fecha</th>
-                    <th>Cliente</th>
-                    <th>Subtotal</th>
-                    <th>Descuento</th>
-                    <th>Total</th>
-                    <th>Pago</th>
-                    <th>Estado</th>
-                    <th>Acción</th>
-                  </tr>
-                </thead>
-                <tbody id="tablaHistorial"></tbody>
-              </table>
-            </div>
-          </div>
-        </section>
-
-        <!-- CONFIGURACIÓN -->
-        <section id="seccion-configuracion" class="section">
-          <div class="panel">
-            <div class="panel-header">
-              <h3>⚙️ Configuración del Sistema</h3>
-            </div>
-            <form id="formConfig" onsubmit="guardarDatosConfiguracion(event)" style="max-width:500px; display:flex; flex-direction:column; gap:15px;">
-              <div class="form-group">
-                <label>Nombre del Negocio:</label>
-                <input type="text" id="cfgNombre" required>
-              </div>
-              <div class="form-group">
-                <label>NIT / Cédula:</label>
-                <input type="text" id="cfgNit">
-              </div>
-              <div class="form-group">
-                <label>Teléfono:</label>
-                <input type="text" id="cfgTelefono">
-              </div>
-              <div class="form-group">
-                <label>Dirección:</label>
-                <input type="text" id="cfgDireccion">
-              </div>
-              <div class="form-group">
-                <label>Mensaje al pie del Ticket:</label>
-                <input type="text" id="cfgMensaje">
-              </div>
-              <button type="submit" class="btn btn-success">💾 Guardar Configuración</button>
-            </form>
-          </div>
-        </section>
-
-      </div>
-    </main>
-  </div>
-</div>
-
-<!-- MODAL PRODUCTO -->
-<div id="modalProducto" class="modal">
-  <div class="modal-card">
-    <div class="modal-header">
-      <h3 id="modalProductoTitulo">Nuevo producto</h3>
-      <button class="close-modal" onclick="cerrarModal('modalProducto')">×</button>
-    </div>
-    <input type="hidden" id="productoIdEdit">
-    <div class="form-group"><label>Código de barras</label><input type="text" id="productoCodigo"></div>
-    <div class="form-group"><label>Nombre</label><input type="text" id="productoNombre"></div>
-    <div class="form-group"><label>Categoría</label><input type="text" id="productoCategoria"></div>
-    <div class="form-group"><label>Precio compra</label><input type="number" id="productoCompra" min="0"></div>
-    <div class="form-group"><label>Precio venta</label><input type="number" id="productoVenta" min="0"></div>
-    <div class="form-group"><label>Stock inicial</label><input type="number" id="productoStock" min="0" value="0"></div>
-    <div class="form-group"><label>Stock mínimo</label><input type="number" id="productoStockMinimo" min="0" value="5"></div>
-    <button class="btn btn-success btn-full" onclick="guardarProductoUI()">Guardar producto</button>
-  </div>
-</div>
-
-<!-- MODAL CLIENTE -->
-<div id="modalCliente" class="modal">
-  <div class="modal-card">
-    <div class="modal-header">
-      <h3>Nuevo cliente</h3>
-      <button class="close-modal" onclick="cerrarModal('modalCliente')">×</button>
-    </div>
-    <div class="form-group"><label>Documento</label><input type="text" id="clienteDocumento"></div>
-    <div class="form-group"><label>Nombre</label><input type="text" id="clienteNombre"></div>
-    <div class="form-group"><label>Teléfono</label><input type="text" id="clienteTelefono"></div>
-    <div class="form-group"><label>Dirección</label><input type="text" id="clienteDireccion"></div>
-    <div class="form-group"><label>Correo</label><input type="email" id="clienteCorreo"></div>
-    <button class="btn btn-success btn-full" onclick="guardarClienteUI()">Guardar cliente</button>
-  </div>
-</div>
-
-<!-- MODAL DE CONFIRMACIÓN PERSONALIZADO -->
-<div id="modalConfirmacion" class="modal">
-  <div class="modal-card" style="max-width: 400px; text-align: center; padding: 30px;">
-    <div style="font-size: 40px; margin-bottom: 10px;">⚠️</div>
-    <h3 id="confirmTitulo" style="margin-bottom: 10px; font-size: 18px;">¿Estás seguro?</h3>
-    <p id="confirmMensaje" style="color: #6b7280; font-size: 14px; margin-bottom: 25px;">¿Deseas eliminar este elemento?</p>
-    <div style="display: flex; gap: 10px; justify-content: center;">
-      <button class="btn btn-secondary" style="flex: 1;" onclick="cerrarModal('modalConfirmacion')">Cancelar</button>
-      <button id="confirmBtnAceptar" class="btn btn-danger" style="flex: 1;">Sí, eliminar</button>
+    <div style="font-size:58px">🔧</div>
+    <div class="brand">COMPUINVA<small>Centro de Reparaciones y Tecnología</small></div>
+    <div class="form" style="margin-top:25px">
+      <div><label>Usuario</label><input id="loginUser" value="admin"></div>
+      <div><label>Contraseña</label><input id="loginPass" type="password" value="1234"></div>
+      <button class="btn primary full" onclick="login()">INGRESAR</button>
+      <div id="loginMsg" class="muted"></div>
     </div>
   </div>
 </div>
 
-<div id="toast"></div>
+<div id="app">
+<div class="layout">
+<aside class="side">
+  <div class="logo">COMPUINVA<span>Centro de Reparaciones</span></div>
+  <div class="nav">
+    <button class="active" onclick="showSection('dashboard',this)">🏠 Dashboard</button>
+    <button onclick="showSection('ordenes',this)">🔧 Reparaciones</button>
+    <button onclick="showSection('clientes',this)">👥 Clientes</button>
+    <button onclick="showSection('facturas',this)">🧾 Facturación</button>
+    <button onclick="showSection('inventario',this)">📦 Inventario</button>
+    <button onclick="showSection('finanzas',this)">💰 Finanzas</button>
+    <button onclick="showSection('servicios',this)">🛠 Servicios</button>
+    <button onclick="showSection('proveedores',this)">🏢 Proveedores</button>
+    <button onclick="showSection('config',this)">⚙️ Configuración</button>
+  </div>
+  <div class="side-bottom"><button class="btn danger full" onclick="logout()">Cerrar sesión</button></div>
+</aside>
+
+<main class="main">
+<header class="top"><h1 id="sectionTitle">Dashboard</h1><div>👤 <b id="userName">Administrador</b></div></header>
+<div class="content">
+
+<section id="dashboard" class="section active">
+  <div class="cards">
+    <div class="card"><div class="label">VENTAS HOY</div><div class="value" id="dVentas">$0</div></div>
+    <div class="card"><div class="label">GANANCIA NETA HOY</div><div class="value" id="dGanancia">$0</div></div>
+    <div class="card"><div class="label">GASTOS HOY</div><div class="value" id="dGastos">$0</div></div>
+    <div class="card"><div class="label">REPARACIONES PENDIENTES</div><div class="value" id="dPendientes">0</div></div>
+    <div class="card"><div class="label">FACTURAS HOY</div><div class="value" id="dFacturas">0</div></div>
+    <div class="card"><div class="label">CLIENTES</div><div class="value" id="dClientes">0</div></div>
+    <div class="card"><div class="label">PRODUCTOS</div><div class="value" id="dProductos">0</div></div>
+    <div class="card"><div class="label">STOCK BAJO</div><div class="value" id="dStock">0</div></div>
+  </div>
+  <div class="grid grid2">
+    <div class="panel"><div class="panel-title"><h2>Reparaciones por estado</h2></div><div id="estadoChart"></div></div>
+    <div class="panel"><div class="panel-title"><h2>Productos con stock bajo</h2></div><div id="stockList"></div></div>
+  </div>
+</section>
+
+<section id="ordenes" class="section">
+  <div class="panel"><div class="panel-title"><h2>Órdenes de reparación</h2><button class="btn primary" onclick="openOrder()">+ Nueva reparación</button></div>
+    <div class="filters"><input id="orderSearch" placeholder="Buscar orden, falla o técnico" oninput="loadOrders()"><select id="orderState" onchange="loadOrders()"><option value="">Todos los estados</option><option>RECIBIDO</option><option>EN DIAGNÓSTICO</option><option>COTIZACIÓN</option><option>ESPERANDO APROBACIÓN</option><option>APROBADO</option><option>EN REPARACIÓN</option><option>ESPERANDO REPUESTO</option><option>REPARADO</option><option>LISTO PARA ENTREGA</option><option>ENTREGADO</option><option>NO REPARADO</option><option>CANCELADO</option></select></div>
+    <div class="table-wrap"><table><thead><tr><th>Orden</th><th>Fecha</th><th>Cliente</th><th>Equipo</th><th>Falla</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="ordersTable"></tbody></table></div>
+  </div>
+</section>
+
+<section id="clientes" class="section">
+  <div class="panel"><div class="panel-title"><h2>Clientes</h2><button class="btn primary" onclick="openClient()">+ Nuevo cliente</button></div>
+    <input style="padding:10px;width:100%;border:1px solid var(--line);border-radius:9px" id="clientSearch" placeholder="Buscar por nombre, documento o teléfono" oninput="renderClients()">
+    <div class="table-wrap"><table><thead><tr><th>ID</th><th>Documento</th><th>Nombre</th><th>Teléfono</th><th>WhatsApp</th><th>Correo</th><th>Acciones</th></tr></thead><tbody id="clientsTable"></tbody></table></div>
+  </div>
+</section>
+
+<section id="facturas" class="section">
+  <div class="panel"><div class="panel-title"><h2>Historial de facturas</h2><button class="btn primary" onclick="openInvoice()">+ Nueva factura</button></div>
+    <div class="filters"><input id="invoiceSearch" placeholder="Factura o cliente" oninput="loadInvoices()"></div>
+    <div class="table-wrap"><table><thead><tr><th>Factura</th><th>Fecha</th><th>Cliente</th><th>Total</th><th>Pagado</th><th>Saldo</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="invoiceTable"></tbody></table></div>
+  </div>
+</section>
+
+<section id="inventario" class="section">
+  <div class="panel"><div class="panel-title"><h2>Inventario</h2><button class="btn primary" onclick="openProduct()">+ Nuevo producto</button></div>
+    <div class="table-wrap"><table><thead><tr><th>ID</th><th>Código</th><th>Producto</th><th>Categoría</th><th>Costo</th><th>Venta</th><th>Stock</th><th>Mínimo</th><th>Acciones</th></tr></thead><tbody id="productsTable"></tbody></table></div>
+  </div>
+</section>
+
+<section id="finanzas" class="section">
+  <div class="panel"><div class="panel-title"><h2>Finanzas</h2></div>
+    <div class="filters"><select id="reportMonth"></select><select id="reportYear"></select><button class="btn primary" onclick="loadMonthly()">Consultar</button></div>
+    <div class="cards" style="margin-top:15px">
+      <div class="card"><div class="label">VENTAS</div><div class="value" id="mVentas">$0</div></div>
+      <div class="card"><div class="label">COSTOS</div><div class="value" id="mCostos">$0</div></div>
+      <div class="card"><div class="label">GASTOS</div><div class="value" id="mGastos">$0</div></div>
+      <div class="card"><div class="label">GANANCIA NETA</div><div class="value" id="mGanancia">$0</div></div>
+    </div>
+  </div>
+  <div class="panel"><div class="panel-title"><h2>Registrar gasto</h2><button class="btn warning" onclick="openExpense()">+ Gasto</button></div><div class="muted">Los gastos registrados se descuentan automáticamente de la ganancia neta mensual.</div></div>
+</section>
+
+<section id="servicios" class="section"><div class="panel"><div class="panel-title"><h2>Servicios</h2><button class="btn primary" onclick="openService()">+ Nuevo servicio</button></div><div class="table-wrap"><table><thead><tr><th>Código</th><th>Nombre</th><th>Categoría</th><th>Costo</th><th>Precio</th></tr></thead><tbody id="servicesTable"></tbody></table></div></div></section>
+
+<section id="proveedores" class="section"><div class="panel"><div class="panel-title"><h2>Proveedores</h2><button class="btn primary" onclick="openSupplier()">+ Nuevo proveedor</button></div><div class="table-wrap"><table><thead><tr><th>ID</th><th>Nombre</th><th>Empresa</th><th>Teléfono</th><th>WhatsApp</th></tr></thead><tbody id="suppliersTable"></tbody></table></div></div></section>
+
+<section id="config" class="section">
+ <div class="panel"><div class="panel-title"><h2>Configuración del negocio</h2></div>
+  <div class="form-grid">
+   <div><label>Nombre</label><input id="cfgName"></div><div><label>NIT / Documento</label><input id="cfgNit"></div>
+   <div><label>Teléfono</label><input id="cfgPhone"></div><div><label>WhatsApp</label><input id="cfgWhatsapp"></div>
+   <div><label>Correo</label><input id="cfgEmail"></div><div><label>Ciudad</label><input id="cfgCity"></div>
+   <div class="wide"><label>Dirección</label><input id="cfgAddress"></div>
+   <div class="wide"><label>Mensaje de factura</label><textarea id="cfgMessage"></textarea></div>
+   <div><label>Días de garantía predeterminados</label><input id="cfgWarranty" type="number"></div>
+   <div style="display:flex;align-items:end"><button class="btn primary full" onclick="saveConfig()">Guardar configuración</button></div>
+  </div>
+ </div>
+</section>
+
+</div></main></div></div>
+
+<!-- CLIENTE -->
+<div class="modal" id="clientModal"><div class="modal-box"><div class="modal-head"><h3>Nuevo cliente</h3><button class="btn secondary" onclick="closeModal('clientModal')">✕</button></div>
+<div class="form-grid">
+<input type="hidden" id="clientId">
+<div><label>Documento</label><input id="clientDoc"></div><div><label>Nombre *</label><input id="clientName"></div>
+<div><label>Teléfono</label><input id="clientPhone"></div><div><label>WhatsApp</label><input id="clientWhatsapp"></div>
+<div><label>Correo</label><input id="clientEmail"></div><div><label>Ciudad</label><input id="clientCity"></div>
+<div class="wide"><label>Dirección</label><input id="clientAddress"></div><div class="wide"><label>Observaciones</label><textarea id="clientObs"></textarea></div>
+</div><div class="actions" style="margin-top:15px"><button class="btn primary" onclick="saveClient()">Guardar</button></div></div></div>
+
+<!-- ORDEN -->
+<div class="modal" id="orderModal"><div class="modal-box"><div class="modal-head"><h3>Nueva reparación</h3><button class="btn secondary" onclick="closeModal('orderModal')">✕</button></div>
+<div class="form-grid">
+<div><label>Cliente *</label><select id="orderClient" onchange="loadClientEquipments()"></select></div>
+<div><label>Equipo existente</label><select id="orderEquipment"></select></div>
+<div><label>Tipo de equipo</label><select id="eqType"><option>Laptop</option><option>Computador de escritorio</option><option>Celular</option><option>Tablet</option><option>Consola</option><option>Impresora</option><option>Monitor</option><option>Otro</option></select></div>
+<div><label>Marca</label><input id="eqBrand"></div><div><label>Modelo</label><input id="eqModel"></div><div><label>Serial</label><input id="eqSerial"></div>
+<div><label>IMEI</label><input id="eqImei"></div><div><label>Accesorios</label><input id="eqAccessories"></div>
+<div><label>Técnico</label><input id="orderTech"></div><div><label>Prioridad</label><select id="orderPriority"><option>Normal</option><option>Urgente</option></select></div>
+<div class="wide"><label>Falla reportada *</label><textarea id="orderProblem"></textarea></div>
+<div class="wide"><label>Estado físico / observaciones</label><textarea id="orderObs"></textarea></div>
+</div><div class="actions" style="margin-top:15px"><button class="btn primary" onclick="saveOrder()">Crear orden</button></div></div></div>
+
+<!-- PRODUCTO -->
+<div class="modal" id="productModal"><div class="modal-box"><div class="modal-head"><h3>Producto</h3><button class="btn secondary" onclick="closeModal('productModal')">✕</button></div>
+<div class="form-grid"><input type="hidden" id="prodId">
+<div><label>Código</label><input id="prodCode"></div><div><label>Nombre *</label><input id="prodName"></div>
+<div><label>Categoría</label><input id="prodCat"></div><div><label>Marca</label><input id="prodBrand"></div>
+<div><label>Modelo</label><input id="prodModel"></div><div><label>Costo</label><input id="prodCost" type="number"></div>
+<div><label>Precio venta</label><input id="prodPrice" type="number"></div><div><label>Stock</label><input id="prodStock" type="number"></div>
+<div><label>Stock mínimo</label><input id="prodMin" type="number" value="2"></div></div>
+<div class="actions" style="margin-top:15px"><button class="btn primary" onclick="saveProduct()">Guardar</button></div></div></div>
+
+<!-- FACTURA -->
+<div class="modal" id="invoiceModal"><div class="modal-box"><div class="modal-head"><h3>Nueva factura</h3><button class="btn secondary" onclick="closeModal('invoiceModal')">✕</button></div>
+<div class="form-grid">
+<div><label>Cliente</label><select id="invClient"></select></div><div><label>Orden</label><input id="invOrder" placeholder="ORD-000001"></div>
+<div><label>Servicio / concepto</label><input id="invDescription"></div><div><label>Precio</label><input id="invPrice" type="number"></div>
+<div><label>Costo</label><input id="invCost" type="number"></div><div><label>Cantidad</label><input id="invQty" type="number" value="1" min="1"></div>
+<div><label>Descuento</label><input id="invDiscount" type="number" value="0"></div>
+<div><label>Método de pago</label><select id="invPayment"><option>Efectivo</option><option>Nequi</option><option>Daviplata</option><option>Transferencia</option><option>Tarjeta</option><option>Otro</option></select></div>
+<div><label>Valor pagado</label><input id="invPaid" type="number"></div><div><label>Garantía (días)</label><input id="invWarranty" type="number" value="30"></div>
+</div><div class="panel" style="margin-top:15px"><b>Total: <span id="invTotal">$0</span></b></div>
+<div class="actions" style="margin-top:15px"><button class="btn success" onclick="saveInvoice()">Generar factura e imprimir</button></div></div></div>
+
+<!-- SERVICIO -->
+<div class="modal" id="serviceModal"><div class="modal-box"><div class="modal-head"><h3>Servicio</h3><button class="btn secondary" onclick="closeModal('serviceModal')">✕</button></div>
+<div class="form-grid"><div><label>Código</label><input id="srvCode"></div><div><label>Nombre</label><input id="srvName"></div><div><label>Categoría</label><input id="srvCat"></div><div><label>Costo</label><input id="srvCost" type="number"></div><div><label>Precio</label><input id="srvPrice" type="number"></div><div class="wide"><label>Descripción</label><textarea id="srvDesc"></textarea></div></div><button class="btn primary" style="margin-top:15px" onclick="saveService()">Guardar</button></div></div>
+
+<!-- PROVEEDOR -->
+<div class="modal" id="supplierModal"><div class="modal-box"><div class="modal-head"><h3>Proveedor</h3><button class="btn secondary" onclick="closeModal('supplierModal')">✕</button></div>
+<div class="form-grid"><div><label>Nombre</label><input id="supName"></div><div><label>Empresa</label><input id="supCompany"></div><div><label>Documento</label><input id="supDoc"></div><div><label>Teléfono</label><input id="supPhone"></div><div><label>WhatsApp</label><input id="supWhatsapp"></div><div><label>Correo</label><input id="supEmail"></div><div class="wide"><label>Dirección</label><input id="supAddress"></div></div><button class="btn primary" style="margin-top:15px" onclick="saveSupplier()">Guardar</button></div></div>
+
+<!-- GASTO -->
+<div class="modal" id="expenseModal"><div class="modal-box"><div class="modal-head"><h3>Registrar gasto</h3><button class="btn secondary" onclick="closeModal('expenseModal')">✕</button></div>
+<div class="form-grid"><div><label>Categoría</label><select id="expCat"><option>Arriendo</option><option>Servicios públicos</option><option>Transporte</option><option>Herramientas</option><option>Publicidad</option><option>Papelería</option><option>Otros</option></select></div><div><label>Valor</label><input id="expValue" type="number"></div><div class="wide"><label>Descripción</label><input id="expDesc"></div></div><button class="btn warning" style="margin-top:15px" onclick="saveExpense()">Guardar gasto</button></div></div>
+
+<div id="toast" class="toast"></div><div id="printArea" class="print-only"></div>
 
 <script>
-
-  /* =========================================================
-     CONEXIÓN CON GOOGLE APPS SCRIPT
-     REEMPLAZA API_URL por la URL de tu Web App de Apps Script.
-     ========================================================= */
-  const API_URL = 'https://script.google.com/macros/s/AKfycbylfBeGE_VX-IQMw5LDbd9Rb5JBDKJRMaGSinRJpnsokw0-q3ZkI9PkNYN3Q03X1HA/exec';
-
-  function apiCall(action, params = {}) {
-    return new Promise((resolve, reject) => {
-      if (!API_URL || API_URL.includes('PEGA_AQUI')) {
-        reject(new Error('Configura API_URL con la URL de tu Web App de Google Apps Script.'));
-        return;
-      }
-
-      const callbackName = '__apiCallback_' + Date.now() + '_' + Math.random().toString(36).slice(2);
-      const script = document.createElement('script');
-      const query = new URLSearchParams();
-
-      query.set('action', action);
-      query.set('callback', callbackName);
-      query.set('data', JSON.stringify(params));
-      if (usuarioActual && usuarioActual.token) query.set('token', usuarioActual.token);
-
-      const cleanup = () => {
-        delete window[callbackName];
-        if (script.parentNode) script.parentNode.removeChild(script);
-      };
-
-      const timeout = setTimeout(() => {
-        cleanup();
-        reject(new Error('Tiempo de espera agotado. Verifica la URL de Apps Script y el despliegue como Web App.'));
-      }, 30000);
-
-      window[callbackName] = function(response) {
-        clearTimeout(timeout);
-        cleanup();
-        resolve(response);
-      };
-
-      script.onerror = function() {
-        clearTimeout(timeout);
-        cleanup();
-        reject(new Error('No se pudo conectar con Google Apps Script.'));
-      };
-
-      script.src = API_URL + (API_URL.includes('?') ? '&' : '?') + query.toString();
-      document.body.appendChild(script);
-    });
-  }
-
-  function manejarErrorAPI(error, mensaje = 'Error de conexión con el servidor.') {
-    console.error(error);
-    mostrarToast((error && error.message) ? error.message : mensaje);
-  }
-
-let usuarioActual = null;
-let carrito = [];
-let productosCache = [];
-let clientesCache = [];
-let historialCache = [];
-let intervalAutoSync = null;
-
-let configSistema = {
-  NOMBRE_NEGOCIO: 'EL MUNDO DE ARI',
-  NIT: '',
-  TELEFONO: '',
-  DIRECCION: '',
-  MENSAJE_TICKET: '¡Gracias por su compra!'
-};
-
-function escapeHTML(str) {
-  if (!str) return '';
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
-}
-
-function formatoCOP(valor) {
-  return new Intl.NumberFormat('es-CO', {
-    style: 'currency', currency: 'COP', maximumFractionDigits: 0
-  }).format(Number(valor || 0));
-}
-
-function mostrarToast(mensaje) {
-  const toast = document.getElementById('toast');
-  toast.textContent = mensaje;
-  toast.classList.add('show');
-  setTimeout(function() { toast.classList.remove('show'); }, 3000);
-}
-
-function mostrarConfirmacion(titulo, mensaje, onAceptar) {
-  document.getElementById('confirmTitulo').textContent = titulo;
-  document.getElementById('confirmMensaje').textContent = mensaje;
-  document.getElementById('modalConfirmacion').classList.add('show');
-  
-  const btnAceptar = document.getElementById('confirmBtnAceptar');
-  const nuevoBtn = btnAceptar.cloneNode(true);
-  btnAceptar.parentNode.replaceChild(nuevoBtn, btnAceptar);
-  
-  document.getElementById('confirmBtnAceptar').addEventListener('click', function() {
-    cerrarModal('modalConfirmacion');
-    if (onAceptar) onAceptar();
-  });
-}
-
-async function cargarConfiguracionSistema() {
-  try {
-    const cfg = await apiCall('obtenerConfiguracion');
-    if (cfg && cfg.NOMBRE_NEGOCIO) {
-      configSistema = cfg;
-      document.getElementById('loginTituloNegocio').textContent = configSistema.NOMBRE_NEGOCIO;
-      document.getElementById('sidebarTituloNegocio').textContent = configSistema.NOMBRE_NEGOCIO;
-    }
-  } catch (error) { manejarErrorAPI(error, 'No se pudo cargar la configuración.'); }
-}
-
-async function guardarDatosConfiguracion(e) {
-  e.preventDefault();
-  mostrarToast('Guardando configuración...');
-  const nuevaConfig = {
-    NOMBRE_NEGOCIO: document.getElementById('cfgNombre').value,
-    NIT: document.getElementById('cfgNit').value,
-    TELEFONO: document.getElementById('cfgTelefono').value,
-    DIRECCION: document.getElementById('cfgDireccion').value,
-    MENSAJE_TICKET: document.getElementById('cfgMensaje').value
-  };
-  try {
-    const res = await apiCall('guardarConfiguracion', {config: nuevaConfig});
-    if (!res.ok) { mostrarToast(res.mensaje || 'No se pudo guardar.'); return; }
-    configSistema = nuevaConfig;
-    document.getElementById('sidebarTituloNegocio').textContent = configSistema.NOMBRE_NEGOCIO;
-    document.getElementById('loginTituloNegocio').textContent = configSistema.NOMBRE_NEGOCIO;
-    mostrarToast('Configuración actualizada correctamente.');
-  } catch (error) { manejarErrorAPI(error, 'Error al guardar la configuración.'); }
-}
-
-async function iniciarSesion() {
-  const usuario = document.getElementById('loginUsuario').value.trim();
-  const contrasena = document.getElementById('loginContrasena').value;
-  const errorEl = document.getElementById('loginError');
-  if (!usuario || !contrasena) { errorEl.textContent = 'Ingrese usuario y contraseña.'; return; }
-  errorEl.textContent = 'Validando...';
-  try {
-    const resultado = await apiCall('login', {usuario, contrasena});
-    if (!resultado.ok) { errorEl.textContent = resultado.mensaje || 'Usuario o contraseña incorrectos.'; return; }
-    usuarioActual = resultado.usuario;
-    usuarioActual.token = resultado.token;
-    document.getElementById('loginView').style.display = 'none';
-    document.getElementById('appView').style.display = 'block';
-    document.getElementById('nombreUsuario').textContent = usuarioActual.nombre;
-    cargarSistema();
-    if (!intervalAutoSync) intervalAutoSync = setInterval(cargarSistemaSilencioso, 10000);
-  } catch (error) { errorEl.textContent = error.message || 'Error de conexión.'; }
-}
-
-function cerrarSesion() {
-  if (intervalAutoSync) clearInterval(intervalAutoSync);
-  usuarioActual = null;
-  document.getElementById('appView').style.display = 'none';
-  document.getElementById('loginView').style.display = 'flex';
-  document.getElementById('loginUsuario').value = '';
-  document.getElementById('loginContrasena').value = '';
-  document.getElementById('loginError').textContent = '';
-}
-
-function cargarSistema() {
-  cargarConfiguracionSistema();
-  cargarDashboard();
-  cargarProductos();
-  cargarClientes();
-  cargarHistorial();
-  actualizarMetodoPago();
-}
-
-async function cargarSistemaSilencioso() {
-  try {
-    cargarDashboard();
-    cargarHistorial();
-    productosCache = await apiCall('obtenerProductos');
-  } catch (error) { console.warn('Sincronización automática:', error.message); }
-}
-
-function mostrarSeccion(nombre, boton) {
-  document.querySelectorAll('.section').forEach(seccion => seccion.classList.remove('active'));
-  const seccion = document.getElementById('seccion-' + nombre);
-  if (seccion) seccion.classList.add('active');
-
-  document.querySelectorAll('.menu button').forEach(btn => btn.classList.remove('active'));
-  if (boton) boton.classList.add('active');
-
-  const titulos = { inicio: 'Inicio', venta: 'Nueva venta', productos: 'Productos', clientes: 'Clientes', historial: 'Historial de ventas', configuracion: 'Configuración' };
-  document.getElementById('tituloSeccion').textContent = titulos[nombre] || nombre;
-
-  if (nombre === 'historial') cargarHistorial();
-  if (nombre === 'venta') setTimeout(() => document.getElementById('barcodeInput').focus(), 100);
-  if (nombre === 'configuracion') {
-    document.getElementById('cfgNombre').value = configSistema.NOMBRE_NEGOCIO || '';
-    document.getElementById('cfgNit').value = configSistema.NIT || '';
-    document.getElementById('cfgTelefono').value = configSistema.TELEFONO || '';
-    document.getElementById('cfgDireccion').value = configSistema.DIRECCION || '';
-    document.getElementById('cfgMensaje').value = configSistema.MENSAJE_TICKET || '';
-  }
-}
-
-/* DASHBOARD */
-async function cargarDashboard() {
-  try {
-    const data = await apiCall('obtenerDashboard');
-    document.getElementById('dashVentas').textContent = data.ventasHoy;
-    document.getElementById('dashTotal').textContent = formatoCOP(data.totalHoy);
-    document.getElementById('dashProductos').textContent = data.productos;
-    document.getElementById('dashClientes').textContent = data.clientes;
-    const cardStockBajo = document.getElementById('card-stock-bajo');
-    document.getElementById('dashStockBajo').textContent = data.stockBajo;
-    if (data.stockBajo > 0) cardStockBajo.classList.add('card-alert');
-    else cardStockBajo.classList.remove('card-alert');
-    const tbody = document.getElementById('tablaStockBajo');
-    tbody.innerHTML = '';
-    if (!data.productosStockBajo || !data.productosStockBajo.length) {
-      tbody.innerHTML = '<tr><td colspan="4">No hay productos en nivel crítico.</td></tr>';
-      return;
-    }
-    data.productosStockBajo.forEach(p => {
-      tbody.innerHTML += `
-        <tr class="row-stock-alert">
-          <td>${escapeHTML(p.NOMBRE)}</td>
-          <td>${escapeHTML(p.CODIGO_BARRAS)}</td>
-          <td><span class="badge-danger">${p.STOCK}</span></td>
-          <td>${p.STOCK_MINIMO}</td>
-        </tr>`;
-    });
-  } catch (error) { manejarErrorAPI(error, 'No se pudo cargar el dashboard.'); }
-}
-
-/* CODIGO DE BARRAS */
-function barcodeKeyDown(event) {
-  if (event.key === 'Enter') {
-    event.preventDefault();
-    procesarBarcode();
-  }
-}
-
-async function procesarBarcode() {
-  const input = document.getElementById('barcodeInput');
-  const codigo = input.value.trim();
-  if (!codigo) return;
-  try {
-    const res = await apiCall('buscarProductoPorBarcode', {codigo});
-    if (!res.ok) { mostrarToast(res.mensaje); input.select(); return; }
-    agregarAlCarrito(res.producto);
-    input.value = '';
-    input.focus();
-  } catch (error) { manejarErrorAPI(error, 'No se pudo consultar el código de barras.'); }
-}
-
-/* PRODUCTOS */
-async function cargarProductos() {
-  try {
-    const productos = await apiCall('obtenerProductos');
-    productosCache = productos || [];
-    renderTablaProductos();
-  } catch (error) { manejarErrorAPI(error, 'No se pudieron cargar los productos.'); }
-}
-
-function renderTablaProductos(lista) {
-  lista = lista || productosCache;
-  const tbody = document.getElementById('tablaProductos');
-  tbody.innerHTML = '';
-  if (!lista.length) {
-    tbody.innerHTML = '<tr><td colspan="7">No se encontraron productos.</td></tr>';
-    return;
-  }
-  lista.forEach(p => {
-    tbody.innerHTML += `
-      <tr>
-        <td>${p.ID}</td>
-        <td>${escapeHTML(p.CODIGO_BARRAS)}</td>
-        <td>${escapeHTML(p.NOMBRE)}</td>
-        <td>${escapeHTML(p.CATEGORIA)}</td>
-        <td>${formatoCOP(p.PRECIO_VENTA)}</td>
-        <td>${p.STOCK}</td>
-        <td style="display: flex; gap: 5px;">
-          <button class="btn btn-warning" style="padding: 5px 10px; font-size:12px;" onclick='abrirModalEditarProducto(${JSON.stringify(p)})'>Editar</button>
-          <button class="btn btn-danger" style="padding: 5px 10px; font-size:12px;" onclick="eliminarProducto(${p.ID})">Eliminar</button>
-        </td>
-      </tr>`;
-  });
-}
-
-function abrirModalProducto() {
-  document.getElementById('modalProductoTitulo').textContent = 'Nuevo producto';
-  document.getElementById('productoIdEdit').value = '';
-  document.getElementById('productoCodigo').value = '';
-  document.getElementById('productoNombre').value = '';
-  document.getElementById('productoCategoria').value = '';
-  document.getElementById('productoCompra').value = '';
-  document.getElementById('productoVenta').value = '';
-  document.getElementById('productoStock').value = '0';
-  document.getElementById('productoStockMinimo').value = '5';
-  document.getElementById('modalProducto').classList.add('show');
-}
-
-function abrirModalEditarProducto(p) {
-  document.getElementById('modalProductoTitulo').textContent = 'Editar producto';
-  document.getElementById('productoIdEdit').value = p.ID;
-  document.getElementById('productoCodigo').value = p.CODIGO_BARRAS || '';
-  document.getElementById('productoNombre').value = p.NOMBRE || '';
-  document.getElementById('productoCategoria').value = p.CATEGORIA || '';
-  document.getElementById('productoCompra').value = p.PRECIO_COMPRA || '';
-  document.getElementById('productoVenta').value = p.PRECIO_VENTA || '';
-  document.getElementById('productoStock').value = p.STOCK || '0';
-  document.getElementById('productoStockMinimo').value = p.STOCK_MINIMO || '5';
-  document.getElementById('modalProducto').classList.add('show');
-}
-
-async function guardarProductoUI() {
-  const idEdit = document.getElementById('productoIdEdit').value;
-  const datos = {
-    id: idEdit ? Number(idEdit) : null,
-    codigoBarras: document.getElementById('productoCodigo').value,
-    nombre: document.getElementById('productoNombre').value,
-    categoria: document.getElementById('productoCategoria').value,
-    precioCompra: document.getElementById('productoCompra').value,
-    precioVenta: document.getElementById('productoVenta').value,
-    stock: document.getElementById('productoStock').value,
-    stockMinimo: document.getElementById('productoStockMinimo').value
-  };
-  try {
-    const res = await apiCall('guardarProducto', {datos});
-    if (!res.ok) { mostrarToast(res.mensaje); return; }
-    mostrarToast(idEdit ? 'Producto actualizado correctamente.' : 'Producto guardado correctamente.');
-    cerrarModal('modalProducto');
-    cargarProductos();
-    cargarDashboard();
-  } catch (error) { manejarErrorAPI(error, 'Error al guardar producto.'); }
-}
-
-async function eliminarProducto(id) {
-  mostrarConfirmacion('Eliminar producto', '¿Estás seguro de que deseas eliminar este producto?', async function() {
-    try {
-      const res = await apiCall('eliminarProducto', {id});
-      if (!res.ok) { mostrarToast(res.mensaje || 'Error al eliminar producto.'); return; }
-      mostrarToast('Producto eliminado correctamente.');
-      cargarProductos();
-      cargarDashboard();
-    } catch (error) { manejarErrorAPI(error, 'Error al eliminar producto.'); }
-  });
-}
-
-function filtrarTablaProductos() {
-  const t = document.getElementById('buscarProductoTabla').value.toLowerCase().trim();
-  const l = productosCache.filter(p => String(p.NOMBRE).toLowerCase().includes(t) || String(p.CODIGO_BARRAS).toLowerCase().includes(t));
-  renderTablaProductos(l);
-}
-
-function buscarProductosUI() {
-  const t = document.getElementById('buscarProductoInput').value.toLowerCase().trim();
-  if (!t) { renderResultadosProductos([]); return; }
-  const l = productosCache.filter(p => String(p.NOMBRE).toLowerCase().includes(t) || String(p.CODIGO_BARRAS).toLowerCase().includes(t)).slice(0, 15);
-  renderResultadosProductos(l);
-}
-
-function renderResultadosProductos(lista) {
-  const contenedor = document.getElementById('resultadosProductos');
-  contenedor.innerHTML = '';
-  lista.forEach(p => {
-    contenedor.innerHTML += `
-      <div class="product-result">
-        <div class="product-result-info"><strong>${escapeHTML(p.NOMBRE)}</strong><small>${escapeHTML(p.CODIGO_BARRAS)} · Stock: ${p.STOCK}</small></div>
-        <div><strong>${formatoCOP(p.PRECIO_VENTA)}</strong><button class="btn btn-primary" style="margin-left:8px;" onclick='agregarAlCarrito(${JSON.stringify(p)})'>Agregar</button></div>
-      </div>`;
-  });
-}
-
-/* CARRITO */
-function agregarAlCarrito(producto) {
-  const ex = carrito.find(item => String(item.productoId) === String(producto.ID));
-  if (ex) {
-    if (ex.cantidad + 1 > Number(producto.STOCK)) { mostrarToast('Límite de stock alcanzado.'); return; }
-    ex.cantidad++;
-  } else {
-    carrito.push({ productoId: producto.ID, codigoBarras: producto.CODIGO_BARRAS, nombre: producto.NOMBRE, precio: Number(producto.PRECIO_VENTA), cantidad: 1, stock: Number(producto.STOCK) });
-  }
-  renderCarrito();
-  actualizarResumen();
-}
-
-function cambiarCantidad(i, c) {
-  const item = carrito[i];
-  if (!item) return;
-  if (item.cantidad + c <= 0) carrito.splice(i, 1);
-  else if (item.cantidad + c > item.stock) { mostrarToast('Stock insuficiente.'); return; }
-  else item.cantidad += c;
-  renderCarrito();
-  actualizarResumen();
-}
-
-function eliminarDelCarrito(i) { carrito.splice(i, 1); renderCarrito(); actualizarResumen(); }
-function vaciarCarrito() { carrito = []; renderCarrito(); actualizarResumen(); }
-
-function renderCarrito() {
-  const contenedor = document.getElementById('carrito');
-  contenedor.innerHTML = '';
-  if (!carrito.length) { contenedor.innerHTML = '<p style="color:#777; text-align:center;">El carrito está vacío.</p>'; return; }
-  carrito.forEach((item, index) => {
-    contenedor.innerHTML += `
-      <div class="cart-item">
-        <div class="cart-item-info"><strong>${escapeHTML(item.nombre)}</strong><small>${formatoCOP(item.precio)}</small></div>
-        <div class="qty-control"><button onclick="cambiarCantidad(${index}, -1)">-</button><strong>${item.cantidad}</strong><button onclick="cambiarCantidad(${index}, 1)">+</button></div>
-        <div><strong>${formatoCOP(item.precio * item.cantidad)}</strong><button class="remove-item" onclick="eliminarDelCarrito(${index})">×</button></div>
-      </div>`;
-  });
-}
-
-function obtenerSubtotal() { return carrito.reduce((tot, item) => tot + item.precio * item.cantidad, 0); }
-function obtenerDescuento() { return Math.max(0, Number(document.getElementById('ventaDescuento').value || 0)); }
-function obtenerTotal() { return Math.max(0, obtenerSubtotal() - obtenerDescuento()); }
-
-function actualizarResumen() {
-  document.getElementById('ventaSubtotal').textContent = formatoCOP(obtenerSubtotal());
-  document.getElementById('ventaTotal').textContent = formatoCOP(obtenerTotal());
-  calcularCambio();
-}
-
-function actualizarMetodoPago() {
-  const m = document.getElementById('ventaMetodoPago').value;
-  document.getElementById('paymentBox').style.display = (m === 'Efectivo') ? 'block' : 'none';
-  calcularCambio();
-}
-
-function calcularCambio() {
-  if (document.getElementById('ventaMetodoPago').value !== 'Efectivo') return;
-  const t = obtenerTotal(), r = Number(document.getElementById('valorRecibido').value || 0);
-  const d = document.getElementById('changeDisplay'), v = document.getElementById('cambioValor');
-  if (r < t) { v.textContent = 'Faltan ' + formatoCOP(t - r); d.classList.add('insufficient'); }
-  else { v.textContent = formatoCOP(r - t); d.classList.remove('insufficient'); }
-}
-
-/* FINALIZAR VENTA CON IMPRESIÓN */
-async function finalizarVenta() {
-  if (!carrito.length) { mostrarToast('Agrega productos al carrito.'); return; }
-  const total = obtenerTotal();
-  const metodo = document.getElementById('ventaMetodoPago').value;
-  let recibido = 0, cambio = 0;
-  if (metodo === 'Efectivo') {
-    recibido = Number(document.getElementById('valorRecibido').value || 0);
-    if (recibido < total) { mostrarToast('El monto recibido es insuficiente.'); return; }
-    cambio = recibido - total;
-  } else { recibido = total; }
-  const selC = document.getElementById('ventaCliente');
-  const clienteId = selC.value;
-  const clienteNombre = selC.options[selC.selectedIndex] ? selC.options[selC.selectedIndex].text : 'Consumidor Final';
-  const nombreCajero = usuarioActual ? (usuarioActual.nombre || usuarioActual.usuario) : 'Cajero';
-  try {
-    const res = await apiCall('registrarVenta', {datos: {
-      carrito: carrito,
-      descuento: obtenerDescuento(),
-      clienteId: clienteId,
-      clienteNombre: clienteNombre,
-      metodoPago: metodo,
-      valorRecibido: recibido,
-      usuario: nombreCajero
-    }});
-    if (!res.ok) { mostrarToast(res.mensaje || 'Error al guardar.'); return; }
-    mostrarToast('Venta registrada exitosamente.');
-    res.venta.encabezado.VALOR_RECIBIDO = recibido;
-    res.venta.encabezado.CAMBIO = cambio;
-    res.venta.encabezado.USUARIO = nombreCajero;
-    imprimirTicket(res.venta);
-    carrito = [];
-    document.getElementById('ventaDescuento').value = 0;
-    document.getElementById('valorRecibido').value = '';
-    renderCarrito();
-    actualizarResumen();
-    cargarSistema();
-  } catch (error) { manejarErrorAPI(error, 'Error al registrar la venta.'); }
-}
-
-/* REIMPRESIÓN DESDE EL HISTORIAL */
-async function reimprimirVenta(numeroVenta) {
-  mostrarToast('Cargando ticket ' + numeroVenta + '...');
-  try {
-    const res = await apiCall('obtenerDetalleVenta', {numeroVenta});
-    if (!res.ok) { mostrarToast('Error: ' + res.mensaje); return; }
-    imprimirTicket(res.venta);
-  } catch (error) { manejarErrorAPI(error, 'Error al obtener los datos de la venta.'); }
-}
-
-/* IMPRESIÓN DIRECTA DE TICKETS */
-function imprimirTicket(venta) {
-  const enc = venta.encabezado;
-  const det = venta.detalles || venta.detalle || [];
-  const nombreAtendido = enc.USUARIO || (usuarioActual ? (usuarioActual.nombre || usuarioActual.usuario) : 'Cajero');
-
-  let tablaFilas = '';
-  det.forEach(item => {
-    tablaFilas += `
-      <tr>
-        <td style="padding:2px 0;">${item.CANTIDAD}</td>
-        <td style="padding:2px 0;">${escapeHTML(item.PRODUCTO_NOMBRE)}</td>
-        <td style="text-align:right; padding:2px 0;">${formatoCOP(item.TOTAL)}</td>
-      </tr>`;
-  });
-
-  let detallesPagoHtml = `
-    <div style="display:flex; justify-content:space-between; margin-top:4px;">
-      <span>Método de Pago:</span> <strong>${escapeHTML(enc.METODO_PAGO || 'Efectivo')}</strong>
-    </div>
-  `;
-
-  const metodoLower = String(enc.METODO_PAGO || 'efectivo').toLowerCase();
-  if (metodoLower === 'efectivo') {
-    const valorRecibido = enc.VALOR_RECIBIDO !== undefined ? enc.VALOR_RECIBIDO : enc.TOTAL;
-    const cambioCalculado = enc.CAMBIO !== undefined ? enc.CAMBIO : (valorRecibido - enc.TOTAL);
-
-    detallesPagoHtml += `
-      <div style="display:flex; justify-content:space-between; margin-top:2px;">
-        <span>Paga con:</span> <span>${formatoCOP(valorRecibido)}</span>
-      </div>
-      <div style="display:flex; justify-content:space-between; margin-top:2px;">
-        <span>Cambio:</span> <span>${formatoCOP(cambioCalculado)}</span>
-      </div>
-    `;
-  }
-
-  const contenidoTicket = `
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <title>Ticket ${enc.NUMERO_VENTA}</title>
-      <style>
-        @page { size: auto; margin: 0; }
-        body { font-family: monospace; font-size: 12px; width: 280px; margin: 0 auto; padding: 15px 10px; color: #000; }
-        .center { text-align: center; }
-        .line { border-bottom: 1px dashed #000; margin: 8px 0; }
-        table { width: 100%; border-collapse: collapse; margin: 8px 0; }
-        th { border-bottom: 1px solid #000; text-align: left; padding-bottom: 3px; font-size: 11px; }
-      </style>
-    </head>
-    <body>
-      <div class="center">
-        <strong style="font-size:14px;">${escapeHTML(configSistema.NOMBRE_NEGOCIO)}</strong><br>
-        ${configSistema.NIT ? 'NIT: ' + escapeHTML(configSistema.NIT) + '<br>' : ''}
-        ${configSistema.DIRECCION ? escapeHTML(configSistema.DIRECCION) + '<br>' : ''}
-        ${configSistema.TELEFONO ? 'Tel: ' + escapeHTML(configSistema.TELEFONO) + '<br>' : ''}
-        Ticket: ${enc.NUMERO_VENTA}<br>
-        Fecha: ${enc.FECHA}
-      </div>
-      <div class="line"></div>
-      <div><strong>Cliente:</strong> ${escapeHTML(enc.CLIENTE_NOMBRE)}</div>
-      <div><strong>Atendido por:</strong> ${escapeHTML(nombreAtendido)}</div>
-      <div class="line"></div>
-      <table>
-        <thead>
-          <tr><th>Cant</th><th>Producto</th><th style="text-align:right;">Total</th></tr>
-        </thead>
-        <tbody>
-          ${tablaFilas}
-        </tbody>
-      </table>
-      <div class="line"></div>
-      <div style="display:flex; justify-content:space-between;"><span>Subtotal:</span> <span>${formatoCOP(enc.SUBTOTAL)}</span></div>
-      <div style="display:flex; justify-content:space-between;"><span>Descuento:</span> <span>${formatoCOP(enc.DESCUENTO)}</span></div>
-      <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:13px; margin-top:4px;">
-        <span>TOTAL:</span> <span>${formatoCOP(enc.TOTAL)}</span>
-      </div>
-      <div class="line"></div>
-      ${detallesPagoHtml}
-      <div class="line"></div>
-      <div class="center" style="margin-top:10px;">${escapeHTML(configSistema.MENSAJE_TICKET || '¡Gracias por su compra!')}</div>
-    </body>
-    </html>
-  `;
-
-  let iframe = document.getElementById('printFrame');
-  if (!iframe) {
-    iframe = document.createElement('iframe');
-    iframe.id = 'printFrame';
-    iframe.style.position = 'fixed';
-    iframe.style.right = '0';
-    iframe.style.bottom = '0';
-    iframe.style.width = '0';
-    iframe.style.height = '0';
-    iframe.style.border = '0';
-    document.body.appendChild(iframe);
-  }
-
-  const doc = iframe.contentWindow.document;
-  doc.open();
-  doc.write(contenidoTicket);
-  doc.close();
-
-  setTimeout(() => {
-    iframe.contentWindow.focus();
-    iframe.contentWindow.print();
-  }, 300);
-}
-
-/* DESCARGA DE EXCEL / CSV */
-async function descargarReporteExcel() {
-  mostrarToast('Generando reporte...');
-  try {
-    const res = await apiCall('obtenerReporteExcel');
-    if (!res.ok) { mostrarToast('Error: ' + res.mensaje); return; }
-    let csvContent = "";
-    res.datos.forEach(row => {
-      const fila = row.map(campo => `"${String(campo).replace(/"/g, '""')}"`).join(",");
-      csvContent += fila + "\r\n";
-    });
-    const blob = new Blob(["\uFEFF" + csvContent], {type: 'text/csv;charset=utf-8;'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `Reporte_Ventas_${new Date().toISOString().slice(0,10)}.csv`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    mostrarToast('Descarga completada.');
-  } catch (error) { manejarErrorAPI(error, 'Error al generar el reporte.'); }
-}
-
-/* HISTORIAL */
-async function cargarHistorial() {
-  try {
-    const ventas = await apiCall('obtenerHistorialVentas');
-    historialCache = ventas || [];
-    renderHistorial();
-  } catch (error) { manejarErrorAPI(error, 'Error obteniendo ventas.'); }
-}
-
-function renderHistorial() {
-  const tbody = document.getElementById('tablaHistorial');
-  tbody.innerHTML = '';
-
-  if (!historialCache || !historialCache.length) {
-    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;">No hay ventas en la base de datos.</td></tr>';
-    return;
-  }
-
-  historialCache.forEach(v => {
-    tbody.innerHTML += `
-      <tr>
-        <td><strong>${escapeHTML(v.NUMERO_VENTA)}</strong></td>
-        <td>${escapeHTML(v.FECHA)}</td>
-        <td>${escapeHTML(v.CLIENTE_NOMBRE)}</td>
-        <td>${formatoCOP(v.SUBTOTAL)}</td>
-        <td>${formatoCOP(v.DESCUENTO)}</td>
-        <td><strong>${formatoCOP(v.TOTAL)}</strong></td>
-        <td>${escapeHTML(v.METODO_PAGO)}</td>
-        <td><span style="color:green; font-weight:bold;">${escapeHTML(v.ESTADO)}</span></td>
-        <td>
-          <button class="btn btn-primary" style="padding: 5px 10px; font-size:12px;" onclick="reimprimirVenta('${escapeHTML(v.NUMERO_VENTA)}')">
-            🖨️ Ticket
-          </button>
-        </td>
-      </tr>`;
-  });
-}
-
-/* CLIENTES */
-async function cargarClientes() {
-  try {
-    const clientes = await apiCall('obtenerClientes');
-    clientesCache = clientes || [];
-    renderTablaClientes();
-    const sel = document.getElementById('ventaCliente');
-    sel.innerHTML = '';
-    clientesCache.forEach(c => {
-      sel.innerHTML += `<option value="${c.ID}">${escapeHTML(c.NOMBRE)}</option>`;
-    });
-  } catch (error) { manejarErrorAPI(error, 'No se pudieron cargar los clientes.'); }
-}
-
-function renderTablaClientes(lista) {
-  lista = lista || clientesCache;
-  const tbody = document.getElementById('tablaClientes');
-  tbody.innerHTML = '';
-  if (!lista.length) { tbody.innerHTML = '<tr><td colspan="5">No hay clientes.</td></tr>'; return; }
-  lista.forEach(c => {
-    tbody.innerHTML += `<tr><td>${c.ID}</td><td>${escapeHTML(c.DOCUMENTO)}</td><td>${escapeHTML(c.NOMBRE)}</td><td>${escapeHTML(c.TELEFONO)}</td><td>${escapeHTML(c.CORREO)}</td></tr>`;
-  });
-}
-
-function filtrarTablaClientes() {
-  const t = document.getElementById('buscarClienteTabla').value.toLowerCase().trim();
-  const l = clientesCache.filter(c => String(c.NOMBRE).toLowerCase().includes(t) || String(c.DOCUMENTO).toLowerCase().includes(t));
-  renderTablaClientes(l);
-}
-
-/* MODALES */
-function abrirModalCliente() { document.getElementById('modalCliente').classList.add('show'); }
-function cerrarModal(id) { document.getElementById(id).classList.remove('show'); }
-
-async function guardarClienteUI() {
-  const datos = {
-    documento: document.getElementById('clienteDocumento').value,
-    nombre: document.getElementById('clienteNombre').value,
-    telefono: document.getElementById('clienteTelefono').value,
-    direccion: document.getElementById('clienteDireccion').value,
-    correo: document.getElementById('clienteCorreo').value
-  };
-  try {
-    const res = await apiCall('guardarCliente', {datos});
-    if (!res.ok) { mostrarToast(res.mensaje); return; }
-    mostrarToast('Cliente guardado.');
-    cerrarModal('modalCliente');
-    ['clienteDocumento','clienteNombre','clienteTelefono','clienteDireccion','clienteCorreo'].forEach(id => {
-      document.getElementById(id).value = '';
-    });
-    cargarClientes();
-    cargarDashboard();
-  } catch (error) { manejarErrorAPI(error, 'Error al guardar cliente.'); }
-}
-
-// Inicializar configuración al cargar la página en el navegador
-cargarConfiguracionSistema();
+/* IMPORTANTE: pegue aquí la URL /exec de su Web App de Apps Script */
+const API_URL='https://script.google.com/macros/s/AKfycbz4OE0nx7R4zLgNSLhsYvM2xlnRBLoelxDBWTUsKxmauEYmb43P7NjmETUDJgH9j_8j/exec';
+let token='', user=null, clients=[], products=[], services=[], currentInvoice=null;
+
+function api(action,data={}){return new Promise((resolve,reject)=>{
+  if(!API_URL || API_URL.includes('PEGA_AQUI')) return reject(new Error('Configure API_URL en Index.html.'));
+  const cb='cb_'+Date.now()+'_'+Math.random().toString(36).slice(2);
+  const s=document.createElement('script'), q=new URLSearchParams();
+  q.set('action',action);q.set('callback',cb);q.set('data',JSON.stringify(data));if(token)q.set('token',token);
+  const t=setTimeout(()=>{cleanup();reject(new Error('Tiempo de espera agotado.'));},30000);
+  window[cb]=r=>{clearTimeout(t);cleanup();resolve(r)};s.onerror=()=>{clearTimeout(t);cleanup();reject(new Error('No se pudo conectar con Apps Script.'))};
+  function cleanup(){delete window[cb];s.remove()}
+  s.src=API_URL+(API_URL.includes('?')?'&':'?')+q.toString();document.body.appendChild(s);
+})}
+function money(n){return new Intl.NumberFormat('es-CO',{style:'currency',currency:'COP',maximumFractionDigits:0}).format(Number(n||0))}
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function toast(s){const x=document.getElementById('toast');x.textContent=s;x.classList.add('show');setTimeout(()=>x.classList.remove('show'),3000)}
+function closeModal(id){document.getElementById(id).classList.remove('show')}
+function showSection(id,btn){document.querySelectorAll('.section').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));if(btn)btn.classList.add('active');document.getElementById('sectionTitle').textContent=({dashboard:'Dashboard',ordenes:'Reparaciones',clientes:'Clientes',facturas:'Facturación',inventario:'Inventario',finanzas:'Finanzas',servicios:'Servicios',proveedores:'Proveedores',config:'Configuración'})[id]||id;loadSection(id)}
+async function login(){try{const r=await api('login',{usuario:loginUser.value,contrasena:loginPass.value});if(!r.ok){loginMsg.textContent=r.mensaje;return}token=r.token;user=r.usuario;userName.textContent=user.nombre;login.style.display='none';app.style.display='block';await loadAll();toast('Bienvenido a COMPUINVA')}catch(e){loginMsg.textContent=e.message}}
+async function logout(){if(token)await api('logout');token='';user=null;app.style.display='none';login.style.display='flex'}
+async function loadAll(){await Promise.all([loadDashboard(),loadClients(),loadProducts(),loadServices(),loadOrders(),loadInvoices(),loadConfig(),loadSuppliers()]);fillMonths()}
+async function loadSection(id){if(id==='dashboard')loadDashboard();if(id==='ordenes')loadOrders();if(id==='clientes')loadClients();if(id==='facturas')loadInvoices();if(id==='inventario')loadProducts();if(id==='finanzas')loadMonthly();if(id==='servicios')loadServices();if(id==='proveedores')loadSuppliers();if(id==='config')loadConfig()}
+async function loadDashboard(){try{const d=await api('obtenerDashboard');dVentas.textContent=money(d.ventasHoy);dGanancia.textContent=money(d.gananciaHoy);dGastos.textContent=money(d.gastosHoy);dPendientes.textContent=d.ordenesPendientes;dFacturas.textContent=d.facturasHoy;dClientes.textContent=d.clientes;dProductos.textContent=d.productos;dStock.textContent=d.stockBajo;estadoChart.innerHTML=Object.entries(d.reparacionesPorEstado||{}).map(([k,v])=>`<div style="display:flex;justify-content:space-between;padding:7px;border-bottom:1px solid #eee"><span>${esc(k)}</span><b>${v}</b></div>`).join('')||'<div class="empty">Sin datos</div>';stockList.innerHTML=(d.productosStockBajo||[]).map(p=>`<div style="padding:8px;border-bottom:1px solid #eee"><b>${esc(p.NOMBRE)}</b> — stock ${p.STOCK} / mínimo ${p.STOCK_MINIMO}</div>`).join('')||'<div class="empty">Inventario saludable</div>'}catch(e){toast(e.message)}}
+async function loadClients(){clients=await api('obtenerClientes');renderClients();fillClientSelects()}
+function renderClients(){const q=(clientSearch?.value||'').toLowerCase();const arr=clients.filter(c=>JSON.stringify(c).toLowerCase().includes(q));clientsTable.innerHTML=arr.map(c=>`<tr><td>${c.ID}</td><td>${esc(c.DOCUMENTO)}</td><td><b>${esc(c.NOMBRE)}</b></td><td>${esc(c.TELEFONO)}</td><td>${esc(c.WHATSAPP)}</td><td>${esc(c.CORREO)}</td><td><button class="btn secondary" onclick="openClient(${c.ID})">Editar</button></td></tr>`).join('')||'<tr><td colspan="7" class="empty">No hay clientes.</td></tr>'}
+function fillClientSelects(){const opts='<option value="">Consumidor final / Seleccionar</option>'+clients.map(c=>`<option value="${c.ID}">${esc(c.NOMBRE)} — ${esc(c.TELEFONO)}</option>`).join('');orderClient.innerHTML=opts;invClient.innerHTML=opts}
+function openClient(id){const c=clients.find(x=>String(x.ID)===String(id));['clientId','clientDoc','clientName','clientPhone','clientWhatsapp','clientEmail','clientCity','clientAddress','clientObs'].forEach(x=>document.getElementById(x).value='');if(c){clientId.value=c.ID;clientDoc.value=c.DOCUMENTO||'';clientName.value=c.NOMBRE||'';clientPhone.value=c.TELEFONO||'';clientWhatsapp.value=c.WHATSAPP||'';clientEmail.value=c.CORREO||'';clientCity.value=c.CIUDAD||'';clientAddress.value=c.DIRECCION||'';clientObs.value=c.OBSERVACIONES||''}clientModal.classList.add('show')}
+async function saveClient(){const d={id:clientId.value||null,documento:clientDoc.value,nombre:clientName.value,telefono:clientPhone.value,whatsapp:clientWhatsapp.value,correo:clientEmail.value,ciudad:clientCity.value,direccion:clientAddress.value,observaciones:clientObs.value};const r=await api('guardarCliente',{datos:d});toast(r.mensaje);if(r.ok){closeModal('clientModal');loadClients();loadDashboard()}}
+async function loadOrders(){const r=await api('obtenerOrdenes',{filtro:{q:orderSearch?.value||'',estado:orderState?.value||''}});ordersTable.innerHTML=r.map(o=>`<tr><td><b>${esc(o.NUMERO)}</b></td><td>${esc(o.FECHA_RECEPCION)}</td><td>${esc(o.CLIENTE_NOMBRE)}</td><td>${esc(o.EQUIPO_RESUMEN)}</td><td>${esc(o.FALLA_REPORTADA)}</td><td><span class="badge">${esc(o.ESTADO)}</span></td><td class="actions"><button class="btn secondary" onclick="viewOrder(${o.ID})">Ver</button><button class="btn success" onclick="nextOrderState(${o.ID},'LISTO PARA ENTREGA')">Listo</button><button class="btn primary" onclick="whatsappOrder('${encodeURIComponent(o.CLIENTE_TELEFONO||'')}','${encodeURIComponent(o.NUMERO)}','${encodeURIComponent(o.ESTADO)}')">WhatsApp</button></td></tr>`).join('')||'<tr><td colspan="7" class="empty">No hay órdenes.</td></tr>'}
+async function openOrder(){orderClient.innerHTML='<option>Cargando...</option>';const r=await api('obtenerClientes');clients=r;fillClientSelects();orderClient.value='';orderEquipment.innerHTML='<option value="">Registrar nuevo equipo</option>';['eqBrand','eqModel','eqSerial','eqImei','eqAccessories','orderTech','orderProblem','orderObs'].forEach(x=>document.getElementById(x).value='');orderModal.classList.add('show')}
+async function loadClientEquipments(){const r=await api('obtenerEquipos',{clienteId:orderClient.value});orderEquipment.innerHTML='<option value="">Registrar nuevo equipo</option>'+r.map(e=>`<option value="${e.ID}">${esc([e.TIPO,e.MARCA,e.MODELO,e.SERIAL].filter(Boolean).join(' '))}</option>`).join('')}
+async function saveOrder(){let eqId=orderEquipment.value;if(!eqId){const e=await api('guardarEquipo',{datos:{clienteId:orderClient.value,tipo:eqType.value,marca:eqBrand.value,modelo:eqModel.value,serial:eqSerial.value,imei:eqImei.value,accesorios:eqAccessories.value,estadoFisico:orderObs.value}});if(!e.ok)return toast(e.mensaje);eqId=e.id}const r=await api('guardarOrden',{datos:{clienteId:orderClient.value,equipoId:eqId,tecnico:orderTech.value,prioridad:orderPriority.value,fallaReportada:orderProblem.value,observaciones:orderObs.value,creadoPor:user?.nombre||'admin'}});toast(r.mensaje);if(r.ok){closeModal('orderModal');loadOrders();loadDashboard();printReception(r.numero)}}
+async function nextOrderState(id,state){const r=await api('cambiarEstadoOrden',{ordenId:id,estado:state,observacion:'Actualización desde panel'});toast(r.mensaje);loadOrders();loadDashboard()}
+async function viewOrder(id){const r=await api('obtenerDetalleOrden',{ordenId:id});if(!r.ok)return toast(r.mensaje);const txt=`Orden ${r.orden.NUMERO}\nCliente: ${r.cliente?.NOMBRE||''}\nEquipo: ${[r.equipo?.MARCA,r.equipo?.MODELO].filter(Boolean).join(' ')}\nFalla: ${r.orden.FALLA_REPORTADA}\nEstado: ${r.orden.ESTADO}\nDiagnóstico: ${r.orden.DIAGNOSTICO||'Pendiente'}`;alert(txt)}
+function whatsappOrder(phone,order,state){const p=decodeURIComponent(phone).replace(/\D/g,'');if(!p)return toast('El cliente no tiene WhatsApp registrado.');const msg=`Hola 👋 Te saluda COMPUINVA.%0A%0AOrden: ${decodeURIComponent(order)}%0AEstado: ${decodeURIComponent(state)}%0A%0AGracias por confiar en nosotros.`;window.open('https://wa.me/'+(p.startsWith('57')?p:'57'+p)+'?text='+msg,'_blank')}
+async function loadProducts(){products=await api('obtenerProductos');productsTable.innerHTML=products.map(p=>`<tr><td>${p.ID}</td><td>${esc(p.CODIGO)}</td><td><b>${esc(p.NOMBRE)}</b></td><td>${esc(p.CATEGORIA)}</td><td>${money(p.COSTO)}</td><td>${money(p.PRECIO)}</td><td><span class="badge ${Number(p.STOCK)<=Number(p.STOCK_MINIMO)?'danger':''}">${p.STOCK}</span></td><td>${p.STOCK_MINIMO}</td><td><button class="btn secondary" onclick="openProduct(${p.ID})">Editar</button></td></tr>`).join('')||'<tr><td colspan="9" class="empty">Sin productos.</td></tr>'}
+function openProduct(id){const p=products.find(x=>String(x.ID)===String(id));['prodId','prodCode','prodName','prodCat','prodBrand','prodModel','prodCost','prodPrice','prodStock','prodMin'].forEach(x=>document.getElementById(x).value='');if(p){prodId.value=p.ID;prodCode.value=p.CODIGO||'';prodName.value=p.NOMBRE||'';prodCat.value=p.CATEGORIA||'';prodBrand.value=p.MARCA||'';prodModel.value=p.MODELO||'';prodCost.value=p.COSTO||0;prodPrice.value=p.PRECIO||0;prodStock.value=p.STOCK||0;prodMin.value=p.STOCK_MINIMO||0}productModal.classList.add('show')}
+async function saveProduct(){const r=await api('guardarProducto',{datos:{id:prodId.value||null,codigo:prodCode.value,nombre:prodName.value,categoria:prodCat.value,marca:prodBrand.value,modelo:prodModel.value,costo:prodCost.value,precio:prodPrice.value,stock:prodStock.value,stockMinimo:prodMin.value}});toast(r.mensaje);if(r.ok){closeModal('productModal');loadProducts();loadDashboard()}}
+async function loadServices(){services=await api('obtenerServicios');servicesTable.innerHTML=services.map(s=>`<tr><td>${esc(s.CODIGO)}</td><td>${esc(s.NOMBRE)}</td><td>${esc(s.CATEGORIA)}</td><td>${money(s.COSTO)}</td><td>${money(s.PRECIO)}</td></tr>`).join('')||'<tr><td colspan="5" class="empty">Sin servicios.</td></tr>'}
+function openService(){['srvCode','srvName','srvCat','srvCost','srvPrice','srvDesc'].forEach(x=>document.getElementById(x).value='');serviceModal.classList.add('show')}
+async function saveService(){const r=await api('guardarServicio',{datos:{codigo:srvCode.value,nombre:srvName.value,categoria:srvCat.value,costo:srvCost.value,precio:srvPrice.value,descripcion:srvDesc.value}});toast(r.mensaje);if(r.ok){closeModal('serviceModal');loadServices()}}
+async function loadSuppliers(){const r=await api('obtenerProveedores');suppliersTable.innerHTML=r.map(s=>`<tr><td>${s.ID}</td><td>${esc(s.NOMBRE)}</td><td>${esc(s.EMPRESA)}</td><td>${esc(s.TELEFONO)}</td><td>${esc(s.WHATSAPP)}</td></tr>`).join('')||'<tr><td colspan="5" class="empty">Sin proveedores.</td></tr>'}
+function openSupplier(){['supName','supCompany','supDoc','supPhone','supWhatsapp','supEmail','supAddress'].forEach(x=>document.getElementById(x).value='');supplierModal.classList.add('show')}
+async function saveSupplier(){const r=await api('guardarProveedor',{datos:{nombre:supName.value,empresa:supCompany.value,documento:supDoc.value,telefono:supPhone.value,whatsapp:supWhatsapp.value,correo:supEmail.value,direccion:supAddress.value}});toast(r.mensaje);if(r.ok){closeModal('supplierModal');loadSuppliers()}}
+async function loadInvoices(){const r=await api('obtenerFacturas',{filtro:{q:invoiceSearch?.value||''}});invoiceTable.innerHTML=r.map(f=>`<tr><td><b>${esc(f.NUMERO)}</b></td><td>${esc(f.FECHA)}</td><td>${esc(f.CLIENTE_NOMBRE)}</td><td class="money">${money(f.TOTAL)}</td><td>${money(f.PAGADO)}</td><td>${money(f.SALDO)}</td><td><span class="badge ${Number(f.SALDO)<=0?'ok':'warn'}">${esc(f.ESTADO)}</span></td><td class="actions"><button class="btn primary" onclick="reprint('${esc(f.NUMERO)}')">🖨 Imprimir</button><button class="btn success" onclick="shareInvoice('${esc(f.NUMERO)}')">WhatsApp</button></td></tr>`).join('')||'<tr><td colspan="8" class="empty">Sin facturas.</td></tr>'}
+function openInvoice(){fillClientSelects();invDescription.value='Servicio de reparación';invPrice.value='';invCost.value='';invQty.value=1;invDiscount.value=0;invPaid.value='';invOrder.value='';invWarranty.value=30;invoiceModal.classList.add('show')}
+invPrice.addEventListener('input',calcInvoice);invQty.addEventListener('input',calcInvoice);invDiscount.addEventListener('input',calcInvoice);function calcInvoice(){invTotal.textContent=money(Math.max(0,Number(invPrice.value||0)*Number(invQty.value||1)-Number(invDiscount.value||0)))}
+async function saveInvoice(){const c=clients.find(x=>String(x.ID)===String(invClient.value));const item={tipo:'SERVICIO',itemId:'',descripcion:invDescription.value,cantidad:Number(invQty.value||1),costo:Number(invCost.value||0),precio:Number(invPrice.value||0)};const r=await api('registrarFactura',{datos:{clienteId:invClient.value,clienteNombre:c?.NOMBRE||'Consumidor Final',ordenId:invOrder.value,items:[item],descuento:Number(invDiscount.value||0),pagado:Number(invPaid.value||0),metodoPago:invPayment.value,garantiaDias:Number(invWarranty.value||30),usuario:user?.nombre||'admin'}});toast(r.mensaje);if(r.ok){closeModal('invoiceModal');loadInvoices();loadDashboard();printInvoice(r.venta)}}
+async function reprint(num){const r=await api('obtenerDetalleFactura',{numeroFactura:num});if(r.ok)printInvoice(r)}
+async function shareInvoice(num){const r=await api('obtenerDetalleFactura',{numeroFactura:num});if(!r.ok)return toast(r.mensaje);const p=(r.cliente?.WHATSAPP||r.cliente?.TELEFONO||'').replace(/\D/g,'');if(!p)return toast('Cliente sin WhatsApp.');const msg=`Hola ${r.encabezado.CLIENTE_NOMBRE} 👋%0A%0AComprobante COMPUINVA%0AFactura: ${r.encabezado.NUMERO}%0ATotal: ${encodeURIComponent(money(r.encabezado.TOTAL))}%0AEstado: ${r.encabezado.ESTADO}%0A%0AGracias por confiar en COMPUINVA.`;window.open('https://wa.me/'+(p.startsWith('57')?p:'57'+p)+'?text='+msg,'_blank')}
+function printInvoice(v){const e=v.encabezado,det=v.detalles||[];printArea.innerHTML=`<div class="ticket"><h2>COMPUINVA</h2><div class="center">Centro de Reparaciones y Tecnología</div><hr><div>Factura: <b>${esc(e.NUMERO)}</b></div><div>Fecha: ${esc(e.FECHA)}</div><div>Cliente: ${esc(e.CLIENTE_NOMBRE)}</div><hr><table><thead><tr><th>Cant</th><th>Detalle</th><th>Total</th></tr></thead><tbody>${det.map(i=>`<tr><td>${i.CANTIDAD}</td><td>${esc(i.DESCRIPCION)}</td><td style="text-align:right">${money(i.TOTAL)}</td></tr>`).join('')}</tbody></table><hr><div>Subtotal: ${money(e.SUBTOTAL)}</div><div>Descuento: ${money(e.DESCUENTO)}</div><div class="total">TOTAL: ${money(e.TOTAL)}</div><div>Pagado: ${money(e.PAGADO)}</div><div>Saldo: ${money(e.SALDO)}</div><div>Pago: ${esc(e.METODO_PAGO)}</div><hr><div>Garantía: ${esc(e.GARANTIA_DIAS)} días</div><div>Hasta: ${esc(e.GARANTIA_HASTA)}</div><br><div class="center">Gracias por confiar en COMPUINVA</div></div>`;window.print();setTimeout(()=>printArea.innerHTML='',500)}
+function printReception(num){toast('Orden '+num+' creada. Puedes imprimir el comprobante desde la orden.')}
+async function loadMonthly(){const m=reportMonth.value||new Date().getMonth()+1,y=reportYear.value||new Date().getFullYear();const r=await api('obtenerReporteMensual',{mes:m,anio:y});mVentas.textContent=money(r.ventas);mCostos.textContent=money(r.costos);mGastos.textContent=money(r.gastos);mGanancia.textContent=money(r.gananciaNeta)}
+function fillMonths(){const names=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];reportMonth.innerHTML=names.map((n,i)=>`<option value="${i+1}">${n}</option>`).join('');const y=new Date().getFullYear();reportYear.innerHTML=Array.from({length:5},(_,i)=>`<option>${y-i}</option>`).join('');reportMonth.value=new Date().getMonth()+1;reportYear.value=y}
+function openExpense(){expValue.value='';expDesc.value='';expenseModal.classList.add('show')}
+async function saveExpense(){const r=await api('guardarGasto',{datos:{categoria:expCat.value,valor:expValue.value,descripcion:expDesc.value,usuario:user?.nombre||'admin'}});toast(r.mensaje);if(r.ok){closeModal('expenseModal');loadDashboard();loadMonthly()}}
+async function loadConfig(){const c=await api('obtenerConfiguracion');cfgName.value=c.NOMBRE_NEGOCIO||'COMPUINVA';cfgNit.value=c.NIT||'';cfgPhone.value=c.TELEFONO||'';cfgWhatsapp.value=c.WHATSAPP||'';cfgEmail.value=c.CORREO||'';cfgCity.value=c.CIUDAD||'';cfgAddress.value=c.DIRECCION||'';cfgMessage.value=c.MENSAJE_FACTURA||'';cfgWarranty.value=c.GARANTIA_DIAS||30}
+async function saveConfig(){const r=await api('guardarConfiguracion',{config:{NOMBRE_NEGOCIO:cfgName.value,NIT:cfgNit.value,TELEFONO:cfgPhone.value,WHATSAPP:cfgWhatsapp.value,CORREO:cfgEmail.value,CIUDAD:cfgCity.value,DIRECCION:cfgAddress.value,MENSAJE_FACTURA:cfgMessage.value,GARANTIA_DIAS:cfgWarranty.value}});toast(r.mensaje)}
+window.addEventListener('load',()=>{if(API_URL.includes('PEGA_AQUI'))loginMsg.textContent='Configure primero API_URL con la URL /exec de Apps Script.'});
 </script>
-
 </body>
 </html>
